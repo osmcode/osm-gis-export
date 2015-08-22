@@ -13,6 +13,9 @@
 #include <iostream>
 #include <getopt.h>
 
+#include <ogr_api.h>
+#include <ogrsf_frmts.h>
+
 #include <osmium/index/map/sparse_mem_array.hpp>
 
 #include <osmium/visitor.hpp>

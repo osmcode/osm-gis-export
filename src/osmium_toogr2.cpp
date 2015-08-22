@@ -11,6 +11,9 @@
 #include <iostream>
 #include <getopt.h>
 
+#include <ogr_api.h>
+#include <ogrsf_frmts.h>
+
 // usually you only need one or two of these
 #include <osmium/index/map/dummy.hpp>
 #include <osmium/index/map/sparse_mem_array.hpp>

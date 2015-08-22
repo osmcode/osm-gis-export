@@ -36,8 +36,8 @@ set(AUTHOR "Jochen Topf <jochen@topf.org>")
 #
 #-----------------------------------------------------------------------------
 
-find_package(Osmium COMPONENTS io ogr proj sparsehash)
-include_directories(${OSMIUM_INCLUDE_DIRS})
+find_package(Osmium COMPONENTS io ogr proj)
+include_directories(SYSTEM ${OSMIUM_INCLUDE_DIRS})
 
 
 #-----------------------------------------------------------------------------

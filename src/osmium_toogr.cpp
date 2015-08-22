@@ -8,6 +8,9 @@
 #include <iostream>
 #include <getopt.h>
 
+#include <ogr_api.h>
+#include <ogrsf_frmts.h>
+
 #include <osmium/index/map/all.hpp>
 #include <osmium/handler/node_locations_for_ways.hpp>
 #include <osmium/visitor.hpp>
