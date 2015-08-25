@@ -13,7 +13,6 @@
 
 #include <gdalcpp.hpp>
 
-#include <osmium/index/map/dummy.hpp>
 #include <osmium/index/map/sparse_mem_array.hpp>
 
 #include <osmium/handler/node_locations_for_ways.hpp>
@@ -27,11 +26,8 @@
 #include <osmium/io/any_input.hpp>
 #include <osmium/handler.hpp>
 
-typedef osmium::index::map::Dummy<osmium::unsigned_object_id_type, osmium::Location> index_neg_type;
-
-typedef osmium::index::map::SparseMemArray<osmium::unsigned_object_id_type, osmium::Location> index_pos_type;
-
-typedef osmium::handler::NodeLocationsForWays<index_pos_type, index_neg_type> location_handler_type;
+typedef osmium::index::map::SparseMemArray<osmium::unsigned_object_id_type, osmium::Location> index_type;
+typedef osmium::handler::NodeLocationsForWays<index_type> location_handler_type;
 
 template <class TProjection>
 class MyOGRHandler : public osmium::handler::Handler {
@@ -174,9 +170,8 @@ int main(int argc, char* argv[]) {
     reader1.close();
     std::cerr << "Pass 1 done\n";
 
-    index_pos_type index_pos;
-    index_neg_type index_neg;
-    location_handler_type location_handler(index_pos, index_neg);
+    index_type index_pos;
+    location_handler_type location_handler(index_pos);
     location_handler.ignore_errors();
 
     // Choose one of the following:

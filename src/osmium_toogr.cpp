@@ -18,10 +18,8 @@
 #include <osmium/io/any_input.hpp>
 #include <osmium/handler.hpp>
 
-typedef osmium::index::map::Dummy<osmium::unsigned_object_id_type, osmium::Location> index_neg_type;
 typedef osmium::index::map::Map<osmium::unsigned_object_id_type, osmium::Location> index_pos_type;
-
-typedef osmium::handler::NodeLocationsForWays<index_pos_type, index_neg_type> location_handler_type;
+typedef osmium::handler::NodeLocationsForWays<index_pos_type> location_handler_type;
 
 class MyOGRHandler : public osmium::handler::Handler {
 
@@ -141,8 +139,7 @@ int main(int argc, char* argv[]) {
     osmium::io::Reader reader(input_filename);
 
     std::unique_ptr<index_pos_type> index_pos = map_factory.create_map(location_store);
-    index_neg_type index_neg;
-    location_handler_type location_handler(*index_pos, index_neg);
+    location_handler_type location_handler(*index_pos);
     location_handler.ignore_errors();
 
     CPLSetConfigOption("OGR_SQLITE_SYNCHRONOUS", "FALSE");

@@ -161,7 +161,7 @@ int main(int argc, char* argv[]) {
     // Choose one of the following:
 
     // 1. Use WGS84, do not project coordinates.
-    //osmium::geom::OGRFactory<> m_factory {};
+    //osmium::geom::OGRFactory<> factory {};
 
     // 2. Project coordinates into "Web Mercator".
     osmium::geom::OGRFactory<osmium::geom::MercatorProjection> factory;
@@ -170,7 +170,7 @@ int main(int argc, char* argv[]) {
     //    (Initialize projection with EPSG code or proj string).
     //    In addition you need to link with "-lproj" and add
     //    #include <osmium/geom/projection.hpp>.
-    //osmium::geom::OGRFactory<osmium::geom::Projection> m_factory {osmium::geom::Projection(3857)};
+    //osmium::geom::OGRFactory<osmium::geom::Projection> factory {osmium::geom::Projection(3857)};
 
     CPLSetConfigOption("OGR_SQLITE_SYNCHRONOUS", "FALSE");
     gdalcpp::Dataset dataset(output_format, output_filename, factory.proj_string(), { "SPATIALITE=TRUE" });
