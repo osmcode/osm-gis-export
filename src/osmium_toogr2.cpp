@@ -189,7 +189,7 @@ int main(int argc, char* argv[]) {
     //osmium::geom::OGRFactory<osmium::geom::Projection> factory {osmium::geom::Projection(3857)};
 
     CPLSetConfigOption("OGR_SQLITE_SYNCHRONOUS", "FALSE");
-    gdalcpp::Dataset dataset(output_format, output_filename, factory.proj_string(), { "SPATIALITE=TRUE" });
+    gdalcpp::Dataset dataset{output_format, output_filename, gdalcpp::SRS{factory.proj_string()}, { "SPATIALITE=TRUE" }};
     MyOGRHandler<decltype(factory)::projection_type> ogr_handler(dataset, factory);
 
     std::cerr << "Pass 2...\n";

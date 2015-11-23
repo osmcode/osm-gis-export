@@ -143,7 +143,7 @@ int main(int argc, char* argv[]) {
     location_handler.ignore_errors();
 
     CPLSetConfigOption("OGR_SQLITE_SYNCHRONOUS", "FALSE");
-    gdalcpp::Dataset dataset(output_format, output_filename, "", { "SPATIALITE=TRUE" });
+    gdalcpp::Dataset dataset{output_format, output_filename, gdalcpp::SRS{}, { "SPATIALITE=TRUE" }};
     MyOGRHandler ogr_handler(dataset);
 
     osmium::apply(reader, location_handler, ogr_handler);
