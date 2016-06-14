@@ -33,6 +33,7 @@ addons:
             - g++-4.8
             - gcc-4.8
             - libboost1.55-dev
+            - libboost-program-options1.55-dev
             - libgdal-dev
             - libproj-dev
 
