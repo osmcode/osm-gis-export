@@ -4,6 +4,10 @@
 #
 #-----------------------------------------------------------------------------
 
+add_executable(osm_gis_export_overview osm_gis_export_overview.cpp)
+target_link_libraries(osm_gis_export_overview ${OSMIUM_LIBRARIES} ${Boost_LIBRARIES})
+install(TARGETS osm_gis_export_overview DESTINATION bin)
+
 add_executable(osmium_toogr osmium_toogr.cpp)
 target_link_libraries(osmium_toogr ${OSMIUM_LIBRARIES})
 install(TARGETS osmium_toogr DESTINATION bin)
