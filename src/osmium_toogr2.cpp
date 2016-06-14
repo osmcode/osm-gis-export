@@ -161,7 +161,9 @@ int main(int argc, char* argv[]) {
     }
 
     osmium::area::Assembler::config_type assembler_config;
-    assembler_config.enable_debug_output(debug);
+    if (debug) {
+        assembler_config.debug_level = 1;
+    }
     osmium::area::MultipolygonCollector<osmium::area::Assembler> collector(assembler_config);
 
     std::cerr << "Pass 1...\n";
