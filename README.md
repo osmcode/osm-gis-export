@@ -8,6 +8,13 @@ PostgreSQL or Spatialite.
 
 [![Build Status](https://secure.travis-ci.org/osmcode/osm-gis-export.png)](http://travis-ci.org/osmcode/osm-gis-export)
 
+Sorry, do docs yet. You have to look at the source code and change it according
+to your needs. This software can be used as basis for your own experiments, but
+you need to understand C++ for that. There is no one-size-fits-all solution
+here. Use osmium_toogr as a basis if you only need nodes or ways, no
+(multi)polygons. Use osmium_toogr2 as basis if you also need multipolygon
+support.
+
 
 ## Requires
 
