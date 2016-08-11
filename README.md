@@ -18,12 +18,52 @@ support.
 
 ## Requires
 
-- A C++11 compiler. GCC 4.8 and clang (LLVM) 3.4 or later work.
-- [CMake](http://cmake.org/)
-- [libosmium](https://github.com/osmcode/libosmium)
-- [GDAL/OGR](http://gdal.org/)
-- [Proj.4](http://trac.osgeo.org/proj/)
+You need a C++11 compliant compiler. GCC 4.8 and later as well as clang 3.4 and
+later are known to work. You also need the following libraries:
 
+    Osmium Library
+        Need at least version 2.6.1
+        http://osmcode.org/libosmium
+
+    Protozero
+        https://github.com/mapbox/protozero
+        Debian/Ubuntu: protozero
+        Also included in the libosmium repository.
+
+    Utfcpp
+        http://utfcpp.sourceforge.net/
+        Debian/Ubuntu: libutfcpp-dev
+        Also included in the libosmium repository.
+
+    gdalcpp
+        https://github.com/joto/gdalcpp
+        Also included in the libosmium repository.
+
+    bz2lib (for reading and writing bzipped files)
+        http://www.bzip.org/
+        Debian/Ubuntu: libbz2-dev
+
+    CMake (for building)
+        http://www.cmake.org/
+        Debian/Ubuntu: cmake
+
+    Expat (for parsing XML files)
+        http://expat.sourceforge.net/
+        Debian/Ubuntu: libexpat1-dev
+        openSUSE: libexpat-devel
+
+    GDAL/OGR
+        http://gdal.org/
+        Debian/Ubuntu: libgdal-dev
+
+    zlib (for PBF support)
+        http://www.zlib.net/
+        Debian/Ubuntu: zlib1g-dev
+        openSUSE: zlib-devel
+
+    Proj.4
+        http://trac.osgeo.org/proj/
+        Debian/Ubuntu: libproj-dev
 
 ## Installing dependencies
 
