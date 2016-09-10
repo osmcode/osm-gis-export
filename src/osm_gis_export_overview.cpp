@@ -1,11 +1,14 @@
 
+#include <cstdint>
+#include <cstdlib>
 #include <iostream>
+#include <string>
 
 #include <boost/program_options.hpp>
 
 #include <gdalcpp.hpp>
 
-#include <osmium/index/map/sparse_mem_array.hpp>
+#include <osmium/index/map/sparse_mem_array.hpp> // IWYU pragma: keep
 
 #include <osmium/handler/node_locations_for_ways.hpp>
 #include <osmium/visitor.hpp>
@@ -14,7 +17,7 @@
 
 #include <osmium/geom/factory.hpp>
 #include <osmium/geom/ogr.hpp>
-#include <osmium/io/any_input.hpp>
+#include <osmium/io/any_input.hpp> // IWYU pragma: keep
 #include <osmium/handler.hpp>
 #include <osmium/util/memory.hpp>
 #include <osmium/util/verbose_output.hpp>
@@ -107,7 +110,7 @@ public:
 
     void node(const osmium::Node& node) {
         if (m_cfg.add_untagged_nodes || !node.tags().empty()) {
-            gdalcpp::Feature feature(m_layer_point, m_factory.create_point(node));
+            gdalcpp::Feature feature{m_layer_point, m_factory.create_point(node)};
             feature.set_field("id", double(node.id()));
             add_feature(feature, node);
         }
@@ -115,20 +118,20 @@ public:
 
     void way(const osmium::Way& way) {
         try {
-            gdalcpp::Feature feature(m_layer_linestring, m_factory.create_linestring(way));
+            gdalcpp::Feature feature{m_layer_linestring, m_factory.create_linestring(way)};
             feature.set_field("id", int32_t(way.id()));
             add_feature(feature, way);
-        } catch (osmium::geometry_error&) {
+        } catch (const osmium::geometry_error&) {
             std::cerr << "Ignoring illegal geometry for way " << way.id() << ".\n";
         }
     }
 
     void area(const osmium::Area& area) {
         try {
-            gdalcpp::Feature feature(m_layer_multipolygon, m_factory.create_multipolygon(area));
+            gdalcpp::Feature feature{m_layer_multipolygon, m_factory.create_multipolygon(area)};
             feature.set_field("id", int32_t(area.id()));
             add_feature(feature, area);
-        } catch (osmium::geometry_error&) {
+        } catch (const osmium::geometry_error&) {
             std::cerr << "Ignoring illegal geometry for area "
                         << area.id()
                         << " created from "

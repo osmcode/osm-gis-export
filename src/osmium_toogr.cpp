@@ -5,17 +5,27 @@
 
 */
 
-#include <iostream>
+#include <cerrno>
+#include <cstdlib>
+#include <cstring>
+#include <fcntl.h>
 #include <getopt.h>
+#include <iostream>
+#include <string>
+#include <system_error>
+
+#ifndef _MSC_VER
+# include <unistd.h>
+#endif
 
 #include <gdalcpp.hpp>
 
-#include <osmium/index/map/all.hpp>
+#include <osmium/index/map/all.hpp> // IWYU pragma: keep
 #include <osmium/handler/node_locations_for_ways.hpp>
 #include <osmium/visitor.hpp>
 
 #include <osmium/geom/ogr.hpp>
-#include <osmium/io/any_input.hpp>
+#include <osmium/io/any_input.hpp> // IWYU pragma: keep
 #include <osmium/handler.hpp>
 
 using index_type = osmium::index::map::Map<osmium::unsigned_object_id_type, osmium::Location>;
@@ -43,8 +53,8 @@ public:
 
     void node(const osmium::Node& node) {
         const char* amenity = node.tags().get_value_by_key("amenity");
-        if (amenity && !strcmp(amenity, "post_box")) {
-            gdalcpp::Feature feature(m_layer_point, m_factory.create_point(node));
+        if (amenity && !std::strcmp(amenity, "post_box")) {
+            gdalcpp::Feature feature{m_layer_point, m_factory.create_point(node)};
             feature.set_field("id", static_cast<double>(node.id()));
             feature.set_field("operator", node.tags().get_value_by_key("operator"));
             feature.add_to_layer();
@@ -55,11 +65,11 @@ public:
         const char* highway = way.tags().get_value_by_key("highway");
         if (highway) {
             try {
-                gdalcpp::Feature feature(m_layer_linestring, m_factory.create_linestring(way));
+                gdalcpp::Feature feature{m_layer_linestring, m_factory.create_linestring(way)};
                 feature.set_field("id", static_cast<double>(way.id()));
                 feature.set_field("type", highway);
                 feature.add_to_layer();
-            } catch (osmium::geometry_error&) {
+            } catch (const osmium::geometry_error&) {
                 std::cerr << "Ignoring illegal geometry for way " << way.id() << ".\n";
             }
         }
@@ -122,10 +132,10 @@ int main(int argc, char* argv[]) {
     }
 
     std::string input_filename;
-    std::string output_filename("ogr_out");
+    std::string output_filename{"ogr_out"};
     int remaining_args = argc - optind;
     if (remaining_args > 2) {
-        std::cerr << "Usage: " << argv[0] << " [OPTIONS] [INFILE [OUTFILE]]" << std::endl;
+        std::cerr << "Usage: " << argv[0] << " [OPTIONS] [INFILE [OUTFILE]]\n";
         std::exit(1);
     } else if (remaining_args == 2) {
         input_filename =  argv[optind];
@@ -136,7 +146,7 @@ int main(int argc, char* argv[]) {
         input_filename = "-";
     }
 
-    osmium::io::Reader reader(input_filename);
+    osmium::io::Reader reader{input_filename};
 
     std::unique_ptr<index_type> index = map_factory.create_map(location_store);
     location_handler_type location_handler{*index};
@@ -149,11 +159,11 @@ int main(int argc, char* argv[]) {
     osmium::apply(reader, location_handler, ogr_handler);
     reader.close();
 
-    int locations_fd = open("locations.dump", O_WRONLY | O_CREAT, 0644);
+    int locations_fd = ::open("locations.dump", O_WRONLY | O_CREAT, 0644);
     if (locations_fd < 0) {
-        throw std::system_error(errno, std::system_category(), "Open failed");
+        throw std::system_error{errno, std::system_category(), "Open failed"};
     }
     index->dump_as_list(locations_fd);
-    close(locations_fd);
+    ::close(locations_fd);
 }
 

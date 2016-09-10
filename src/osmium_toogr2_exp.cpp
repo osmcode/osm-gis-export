@@ -10,19 +10,23 @@
 
 */
 
-#include <iostream>
+#include <cstdlib>
+#include <cstring>
 #include <getopt.h>
+#include <iostream>
+#include <string>
+#include <vector>
 
 #include <gdalcpp.hpp>
 
-#include <osmium/index/map/sparse_mem_array.hpp>
+#include <osmium/index/map/sparse_mem_array.hpp> // IWYU pragma: keep
 
 #include <osmium/visitor.hpp>
 
 #include <osmium/geom/mercator_projection.hpp>
 //#include <osmium/geom/projection.hpp>
 #include <osmium/geom/ogr.hpp>
-#include <osmium/io/any_input.hpp>
+#include <osmium/io/any_input.hpp> // IWYU pragma: keep
 #include <osmium/handler.hpp>
 #include <osmium/experimental/flex_reader.hpp>
 
@@ -58,8 +62,8 @@ public:
 
     void node(const osmium::Node& node) {
         const char* amenity = node.tags()["amenity"];
-        if (amenity && !strcmp(amenity, "post_box")) {
-            gdalcpp::Feature feature(m_layer_point, m_factory.create_point(node));
+        if (amenity && !std::strcmp(amenity, "post_box")) {
+            gdalcpp::Feature feature{m_layer_point, m_factory.create_point(node)};
             feature.set_field("id", static_cast<double>(node.id()));
             feature.set_field("operator", node.tags().get_value_by_key("operator"));
             feature.add_to_layer();
@@ -70,11 +74,11 @@ public:
         const char* highway = way.tags()["highway"];
         if (highway) {
             try {
-                gdalcpp::Feature feature(m_layer_linestring, m_factory.create_linestring(way));
+                gdalcpp::Feature feature{m_layer_linestring, m_factory.create_linestring(way)};
                 feature.set_field("id", static_cast<double>(way.id()));
                 feature.set_field("type", highway);
                 feature.add_to_layer();
-            } catch (osmium::geometry_error&) {
+            } catch (const osmium::geometry_error&) {
                 std::cerr << "Ignoring illegal geometry for way " << way.id() << ".\n";
             }
         }
@@ -84,11 +88,11 @@ public:
         const char* building = area.tags()["building"];
         if (building) {
             try {
-                gdalcpp::Feature feature(m_layer_polygon, m_factory.create_multipolygon(area));
+                gdalcpp::Feature feature{m_layer_polygon, m_factory.create_multipolygon(area)};
                 feature.set_field("id", static_cast<double>(area.id()));
                 feature.set_field("type", building);
                 feature.add_to_layer();
-            } catch (osmium::geometry_error&) {
+            } catch (const osmium::geometry_error&) {
                 std::cerr << "Ignoring illegal geometry for area "
                           << area.id()
                           << " created from "
@@ -119,7 +123,7 @@ int main(int argc, char* argv[]) {
         {0, 0, 0, 0}
     };
 
-    std::string output_format("SQLite");
+    std::string output_format{"SQLite"};
 
     while (true) {
         int c = getopt_long(argc, argv, "hf:", long_options, 0);
@@ -143,7 +147,7 @@ int main(int argc, char* argv[]) {
     std::string output_filename{"ogr_out"};
     int remaining_args = argc - optind;
     if (remaining_args > 2) {
-        std::cerr << "Usage: " << argv[0] << " [OPTIONS] [INFILE [OUTFILE]]" << std::endl;
+        std::cerr << "Usage: " << argv[0] << " [OPTIONS] [INFILE [OUTFILE]]\n";
         std::exit(1);
     } else if (remaining_args == 2) {
         input_filename =  argv[optind];
