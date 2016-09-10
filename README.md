@@ -7,6 +7,7 @@ A bunch of programs to export OSM data into GIS formats such as Shapefiles,
 PostgreSQL or Spatialite.
 
 [![Build Status](https://secure.travis-ci.org/osmcode/osm-gis-export.png)](http://travis-ci.org/osmcode/osm-gis-export)
+[![Build status](https://ci.appveyor.com/api/projects/status/github/osmcode/osm-gis-export?svg=true)](https://ci.appveyor.com/project/Mapbox/osm-gis-export)
 
 Sorry, do docs yet. You have to look at the source code and change it according
 to your needs. This software can be used as basis for your own experiments, but
