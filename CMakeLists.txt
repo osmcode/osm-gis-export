@@ -42,6 +42,16 @@ include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
 find_package(Osmium REQUIRED COMPONENTS io ogr proj)
 include_directories(SYSTEM ${OSMIUM_INCLUDE_DIRS})
 
+if(MSVC)
+    find_path(GETOPT_INCLUDE_DIR getopt.h)
+    find_library(GETOPT_LIBRARY NAMES wingetopt)
+    if(GETOPT_INCLUDE_DIR AND GETOPT_LIBRARY)
+        include_directories(SYSTEM ${GETOPT_INCLUDE_DIR})
+        list(APPEND OSMIUM_LIBRARIES ${GETOPT_LIBRARY})
+    else()
+        set(GETOPT_MISSING 1)
+    endif()
+endif()
 
 #-----------------------------------------------------------------------------
 #
@@ -62,7 +72,7 @@ if(CPPCHECK)
 else()
     message(STATUS "Looking for cppcheck - not found")
     message(STATUS "  Build target 'cppcheck' will not be available")
-endif(CPPCHECK)
+endif()
 
 
 #-----------------------------------------------------------------------------
