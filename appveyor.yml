@@ -72,6 +72,10 @@ build_script:
     -DEXPAT_INCLUDE_DIR=%LODEPSDIR%\expat\include
     -DBZIP2_LIBRARIES=%LIBBZIP2%
     -DBZIP2_INCLUDE_DIR=%LODEPSDIR%\bzip2\include
+    -DPROJ_LIBRARY=%LODEPSDIR%\proj\lib\proj.lib
+    -DPROJ_INCLUDE_DIR=%LODEPSDIR%\proj\include
+    -DGDAL_LIBRARY=%LODEPSDIR%\gdal\lib\gdal_i.lib
+    -DGDAL_INCLUDE_DIR=%LODEPSDIR%\gdal\include
   - msbuild osmium.sln /p:Configuration=%config% /toolsversion:14.0 /p:Platform=x64 /p:PlatformToolset=v140
 #  - cmake .. -LA -G "NMake Makefiles"
 #    -DOsmium_DEBUG=TRUE
