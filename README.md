@@ -24,6 +24,7 @@ later are known to work. You also need the following libraries:
     Osmium Library
         Need at least version 2.6.1
         http://osmcode.org/libosmium
+        Debian/Ubuntu: libosmium2-dev
 
     Protozero
         https://github.com/mapbox/protozero
@@ -69,7 +70,7 @@ later are known to work. You also need the following libraries:
 
 ### On Debian Ubuntu
 
-    apt-get install cmake libosmium libgdal-dev libproj-dev
+    apt-get install cmake libosmium2-dev libgdal-dev libproj-dev
 
 
 ## Building
