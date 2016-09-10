@@ -9,8 +9,6 @@
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-
 
 #-----------------------------------------------------------------------------
 #
@@ -28,6 +26,8 @@ set(OSM_GIS_EXPORT_VERSION
     ${OSM_GIS_EXPORT_VERSION_MAJOR}.${OSM_GIS_EXPORT_VERSION_MINOR}.${OSM_GIS_EXPORT_VERSION_PATCH})
 
 set(AUTHOR "Jochen Topf <jochen@topf.org>")
+
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 
 #-----------------------------------------------------------------------------
@@ -127,7 +127,7 @@ if(CPPCHECK)
     # cpp doesn't find system includes for some reason, suppress that report
     set(CPPCHECK_OPTIONS ${CPPCHECK_OPTIONS} --suppress=missingIncludeSystem)
 
-    file(GLOB ALL_CODE *.cpp)
+    file(GLOB ALL_CODE src/*.cpp)
 
     set(CPPCHECK_FILES ${ALL_CODE})
 
@@ -140,6 +140,23 @@ else()
     message(STATUS "Looking for cppcheck - not found")
     message(STATUS "  Build target 'cppcheck' will not be available.")
 endif(CPPCHECK)
+
+
+#-----------------------------------------------------------------------------
+#
+#  Optional "iwyu" target to check headers
+#  http://include-what-you-use.org/
+#
+#-----------------------------------------------------------------------------
+find_program(IWYU_TOOL iwyu_tool.py)
+
+if(IWYU_TOOL)
+    message(STATUS "Looking for iwyu_tool.py - found")
+    add_custom_target(iwyu ${IWYU_TOOL} -p ${CMAKE_BINARY_DIR})
+else()
+    message(STATUS "Looking for iwyu_tool.py - not found")
+    message(STATUS "  Make target iwyu not available")
+endif()
 
 
 #-----------------------------------------------------------------------------

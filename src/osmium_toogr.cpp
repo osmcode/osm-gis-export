@@ -18,8 +18,8 @@
 #include <osmium/io/any_input.hpp>
 #include <osmium/handler.hpp>
 
-typedef osmium::index::map::Map<osmium::unsigned_object_id_type, osmium::Location> index_pos_type;
-typedef osmium::handler::NodeLocationsForWays<index_pos_type> location_handler_type;
+using index_type = osmium::index::map::Map<osmium::unsigned_object_id_type, osmium::Location>;
+using location_handler_type = osmium::handler::NodeLocationsForWays<index_type>;
 
 class MyOGRHandler : public osmium::handler::Handler {
 
@@ -30,7 +30,7 @@ class MyOGRHandler : public osmium::handler::Handler {
 
 public:
 
-    MyOGRHandler(gdalcpp::Dataset& dataset) :
+    explicit MyOGRHandler(gdalcpp::Dataset& dataset) :
         m_layer_point(dataset, "postboxes", wkbPoint),
         m_layer_linestring(dataset, "roads", wkbLineString) {
 
@@ -84,15 +84,15 @@ int main(int argc, char* argv[]) {
     const auto& map_factory = osmium::index::MapFactory<osmium::unsigned_object_id_type, osmium::Location>::instance();
 
     static struct option long_options[] = {
-        {"help",                 no_argument, 0, 'h'},
+        {"help",                 no_argument,       0, 'h'},
         {"format",               required_argument, 0, 'f'},
         {"location_store",       required_argument, 0, 'l'},
-        {"list_location_stores", no_argument, 0, 'L'},
+        {"list_location_stores", no_argument,       0, 'L'},
         {0, 0, 0, 0}
     };
 
-    std::string output_format { "SQLite" };
-    std::string location_store { "sparse_mem_array" };
+    std::string output_format{"SQLite"};
+    std::string location_store{"sparse_mem_array"};
 
     while (true) {
         int c = getopt_long(argc, argv, "hf:l:L", long_options, 0);
@@ -103,7 +103,7 @@ int main(int argc, char* argv[]) {
         switch (c) {
             case 'h':
                 print_help();
-                exit(0);
+                std::exit(0);
             case 'f':
                 output_format = optarg;
                 break;
@@ -115,9 +115,9 @@ int main(int argc, char* argv[]) {
                 for (const auto& map_type : map_factory.map_types()) {
                     std::cout << "  " << map_type << "\n";
                 }
-                exit(0);
+                std::exit(0);
             default:
-                exit(1);
+                std::exit(1);
         }
     }
 
@@ -126,7 +126,7 @@ int main(int argc, char* argv[]) {
     int remaining_args = argc - optind;
     if (remaining_args > 2) {
         std::cerr << "Usage: " << argv[0] << " [OPTIONS] [INFILE [OUTFILE]]" << std::endl;
-        exit(1);
+        std::exit(1);
     } else if (remaining_args == 2) {
         input_filename =  argv[optind];
         output_filename = argv[optind+1];
@@ -138,13 +138,13 @@ int main(int argc, char* argv[]) {
 
     osmium::io::Reader reader(input_filename);
 
-    std::unique_ptr<index_pos_type> index_pos = map_factory.create_map(location_store);
-    location_handler_type location_handler(*index_pos);
+    std::unique_ptr<index_type> index = map_factory.create_map(location_store);
+    location_handler_type location_handler{*index};
     location_handler.ignore_errors();
 
     CPLSetConfigOption("OGR_SQLITE_SYNCHRONOUS", "OFF");
     gdalcpp::Dataset dataset{output_format, output_filename, gdalcpp::SRS{}, { "SPATIALITE=TRUE", "INIT_WITH_EPSG=no" }};
-    MyOGRHandler ogr_handler(dataset);
+    MyOGRHandler ogr_handler{dataset};
 
     osmium::apply(reader, location_handler, ogr_handler);
     reader.close();
@@ -153,7 +153,7 @@ int main(int argc, char* argv[]) {
     if (locations_fd < 0) {
         throw std::system_error(errno, std::system_category(), "Open failed");
     }
-    index_pos->dump_as_list(locations_fd);
+    index->dump_as_list(locations_fd);
     close(locations_fd);
 }
 

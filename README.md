@@ -69,7 +69,7 @@ later are known to work. You also need the following libraries:
 
 ## Installing dependencies
 
-### On Debian Ubuntu
+### On Debian/Ubuntu
 
     apt-get install cmake libosmium2-dev libgdal-dev libproj-dev
 

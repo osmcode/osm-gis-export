@@ -19,8 +19,8 @@
 #include <osmium/util/memory.hpp>
 #include <osmium/util/verbose_output.hpp>
 
-typedef osmium::index::map::SparseMemArray<osmium::unsigned_object_id_type, osmium::Location> index_type;
-typedef osmium::handler::NodeLocationsForWays<index_type> location_handler_type;
+using index_type = osmium::index::map::SparseMemArray<osmium::unsigned_object_id_type, osmium::Location>;
+using location_handler_type = osmium::handler::NodeLocationsForWays<index_type>;
 
 struct config {
     bool add_untagged_nodes = false;
@@ -31,7 +31,7 @@ struct config {
 template <class TProjection>
 class MyOGRHandler : public osmium::handler::Handler {
 
-    static const size_t max_length_tags = 200;
+    static const std::size_t max_length_tags = 200;
 
     config m_cfg;
 
@@ -186,7 +186,7 @@ int main(int argc, char* argv[]) {
 
     if (vm.count("help")) {
         print_help(desc);
-        exit(0);
+        std::exit(0);
     }
 
     if (vm.count("verbose")) {
@@ -247,7 +247,7 @@ int main(int argc, char* argv[]) {
     vout << "Pass 1 done\n";
 
     index_type index_pos;
-    location_handler_type location_handler(index_pos);
+    location_handler_type location_handler{index_pos};
     location_handler.ignore_errors();
 
     osmium::geom::OGRFactory<> factory {};
@@ -262,7 +262,7 @@ int main(int argc, char* argv[]) {
     MyOGRHandler<decltype(factory)::projection_type> ogr_handler(dataset, factory, cfg);
 
     vout << "Pass 2...\n";
-    osmium::io::Reader reader2(input_filename);
+    osmium::io::Reader reader2{input_filename};
 
     osmium::apply(reader2, location_handler, ogr_handler, collector.handler([&ogr_handler](const osmium::memory::Buffer& area_buffer) {
         osmium::apply(area_buffer, ogr_handler);

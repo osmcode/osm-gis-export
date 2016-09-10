@@ -26,8 +26,8 @@
 #include <osmium/handler.hpp>
 #include <osmium/experimental/flex_reader.hpp>
 
-typedef osmium::index::map::SparseMemArray<osmium::unsigned_object_id_type, osmium::Location> index_type;
-typedef osmium::handler::NodeLocationsForWays<index_type> location_handler_type;
+using index_type = osmium::index::map::SparseMemArray<osmium::unsigned_object_id_type, osmium::Location>;
+using location_handler_type = osmium::handler::NodeLocationsForWays<index_type>;
 
 template <class TProjection>
 class MyOGRHandler : public osmium::handler::Handler {
@@ -130,21 +130,21 @@ int main(int argc, char* argv[]) {
         switch (c) {
             case 'h':
                 print_help();
-                exit(0);
+                std::exit(0);
             case 'f':
                 output_format = optarg;
                 break;
             default:
-                exit(1);
+                std::exit(1);
         }
     }
 
     std::string input_filename;
-    std::string output_filename("ogr_out");
+    std::string output_filename{"ogr_out"};
     int remaining_args = argc - optind;
     if (remaining_args > 2) {
         std::cerr << "Usage: " << argv[0] << " [OPTIONS] [INFILE [OUTFILE]]" << std::endl;
-        exit(1);
+        std::exit(1);
     } else if (remaining_args == 2) {
         input_filename =  argv[optind];
         output_filename = argv[optind+1];
@@ -154,9 +154,9 @@ int main(int argc, char* argv[]) {
         input_filename = "-";
     }
 
-    index_type index_pos;
-    location_handler_type location_handler(index_pos);
-    osmium::experimental::FlexReader<location_handler_type> exr(input_filename, location_handler, osmium::osm_entity_bits::object);
+    index_type index;
+    location_handler_type location_handler{index};
+    osmium::experimental::FlexReader<location_handler_type> exr{input_filename, location_handler, osmium::osm_entity_bits::object};
 
     // Choose one of the following:
 
@@ -174,7 +174,7 @@ int main(int argc, char* argv[]) {
 
     CPLSetConfigOption("OGR_SQLITE_SYNCHRONOUS", "OFF");
     gdalcpp::Dataset dataset{output_format, output_filename, gdalcpp::SRS{factory.proj_string()}, { "SPATIALITE=TRUE", "INIT_WITH_EPSG=no" }};
-    MyOGRHandler<decltype(factory)::projection_type> ogr_handler(dataset, factory);
+    MyOGRHandler<decltype(factory)::projection_type> ogr_handler{dataset, factory};
 
     while (auto buffer = exr.read()) {
         osmium::apply(buffer, ogr_handler);

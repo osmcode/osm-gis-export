@@ -26,8 +26,8 @@
 #include <osmium/io/any_input.hpp>
 #include <osmium/handler.hpp>
 
-typedef osmium::index::map::SparseMemArray<osmium::unsigned_object_id_type, osmium::Location> index_type;
-typedef osmium::handler::NodeLocationsForWays<index_type> location_handler_type;
+using index_type = osmium::index::map::SparseMemArray<osmium::unsigned_object_id_type, osmium::Location>;
+using location_handler_type = osmium::handler::NodeLocationsForWays<index_type>;
 
 template <class TProjection>
 class MyOGRHandler : public osmium::handler::Handler {
@@ -133,7 +133,7 @@ int main(int argc, char* argv[]) {
         switch (c) {
             case 'h':
                 print_help();
-                exit(0);
+                std::exit(0);
             case 'd':
                 debug = true;
                 break;
@@ -141,7 +141,7 @@ int main(int argc, char* argv[]) {
                 output_format = optarg;
                 break;
             default:
-                exit(1);
+                std::exit(1);
         }
     }
 
@@ -150,7 +150,7 @@ int main(int argc, char* argv[]) {
     int remaining_args = argc - optind;
     if (remaining_args > 2) {
         std::cerr << "Usage: " << argv[0] << " [OPTIONS] [INFILE [OUTFILE]]" << std::endl;
-        exit(1);
+        std::exit(1);
     } else if (remaining_args == 2) {
         input_filename =  argv[optind];
         output_filename = argv[optind+1];
@@ -164,16 +164,16 @@ int main(int argc, char* argv[]) {
     if (debug) {
         assembler_config.debug_level = 1;
     }
-    osmium::area::MultipolygonCollector<osmium::area::Assembler> collector(assembler_config);
+    osmium::area::MultipolygonCollector<osmium::area::Assembler> collector{assembler_config};
 
     std::cerr << "Pass 1...\n";
-    osmium::io::Reader reader1(input_filename);
+    osmium::io::Reader reader1{input_filename};
     collector.read_relations(reader1);
     reader1.close();
     std::cerr << "Pass 1 done\n";
 
-    index_type index_pos;
-    location_handler_type location_handler(index_pos);
+    index_type index;
+    location_handler_type location_handler{index};
     location_handler.ignore_errors();
 
     // Choose one of the following:
@@ -192,10 +192,10 @@ int main(int argc, char* argv[]) {
 
     CPLSetConfigOption("OGR_SQLITE_SYNCHRONOUS", "OFF");
     gdalcpp::Dataset dataset{output_format, output_filename, gdalcpp::SRS{factory.proj_string()}, { "SPATIALITE=TRUE", "INIT_WITH_EPSG=no" }};
-    MyOGRHandler<decltype(factory)::projection_type> ogr_handler(dataset, factory);
+    MyOGRHandler<decltype(factory)::projection_type> ogr_handler{dataset, factory};
 
     std::cerr << "Pass 2...\n";
-    osmium::io::Reader reader2(input_filename);
+    osmium::io::Reader reader2{input_filename};
 
     osmium::apply(reader2, location_handler, ogr_handler, collector.handler([&ogr_handler](const osmium::memory::Buffer& area_buffer) {
         osmium::apply(area_buffer, ogr_handler);
