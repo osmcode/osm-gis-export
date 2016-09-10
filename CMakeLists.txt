@@ -36,11 +36,50 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 #
 #-----------------------------------------------------------------------------
 
-find_package(Boost REQUIRED COMPONENTS program_options)
+find_package(Boost 1.55.0 REQUIRED COMPONENTS program_options)
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
 
-find_package(Osmium COMPONENTS io ogr proj)
+find_package(Osmium REQUIRED COMPONENTS io ogr proj)
 include_directories(SYSTEM ${OSMIUM_INCLUDE_DIRS})
+
+
+#-----------------------------------------------------------------------------
+#
+#  Optional "cppcheck" target that checks C++ code
+#
+#-----------------------------------------------------------------------------
+message(STATUS "Looking for cppcheck")
+find_program(CPPCHECK cppcheck)
+
+if(CPPCHECK)
+    message(STATUS "Looking for cppcheck - found")
+    set(CPPCHECK_OPTIONS --enable=all)
+
+    # cpp doesn't find system includes for some reason, suppress that report
+    set(CPPCHECK_OPTIONS ${CPPCHECK_OPTIONS} --suppress=missingIncludeSystem)
+
+    add_custom_target(cppcheck ${CPPCHECK} --std=c++11 ${CPPCHECK_OPTIONS} ${CMAKE_SOURCE_DIR}/src/*pp)
+else()
+    message(STATUS "Looking for cppcheck - not found")
+    message(STATUS "  Build target 'cppcheck' will not be available")
+endif(CPPCHECK)
+
+
+#-----------------------------------------------------------------------------
+#
+#  Optional "iwyu" target to check headers
+#  http://include-what-you-use.org/
+#
+#-----------------------------------------------------------------------------
+find_program(IWYU_TOOL iwyu_tool.py)
+
+if(IWYU_TOOL)
+    message(STATUS "Looking for iwyu_tool.py - found")
+    add_custom_target(iwyu ${IWYU_TOOL} -p ${CMAKE_BINARY_DIR})
+else()
+    message(STATUS "Looking for iwyu_tool.py - not found")
+    message(STATUS "  Make target 'iwyu' will not be available")
+endif()
 
 
 #-----------------------------------------------------------------------------
@@ -65,7 +104,16 @@ endif()
 #  Compiler and Linker flags
 #
 #-----------------------------------------------------------------------------
-set(USUAL_COMPILE_OPTIONS "-O3 -g")
+if(MSVC)
+    set(USUAL_COMPILE_OPTIONS "/Ox")
+else()
+    set(USUAL_COMPILE_OPTIONS "-O3 -g")
+endif()
+
+if(WIN32)
+    add_definitions(-DWIN32 -D_WIN32 -DMSWIN32 -DBGDWIN32
+                    -DWINVER=0x0500 -D_WIN32_WINNT=0x0500 -D_WIN32_IE=0x0600)
+endif()
 
 set(CMAKE_CXX_FLAGS_DEV "${USUAL_COMPILE_OPTIONS}"
     CACHE STRING "Flags used by the compiler during developer builds."
@@ -110,53 +158,6 @@ set(CMAKE_BUILD_TYPE ${build_type}
     CACHE STRING
     "Choose the type of build, options are: ${CMAKE_CONFIGURATION_TYPES}."
     FORCE)
-
-
-#-----------------------------------------------------------------------------
-#
-#  Optional "cppcheck" target that checks C++ code
-#
-#-----------------------------------------------------------------------------
-message(STATUS "Looking for cppcheck")
-find_program(CPPCHECK cppcheck)
-
-if(CPPCHECK)
-    message(STATUS "Looking for cppcheck - found")
-    set(CPPCHECK_OPTIONS --enable=all)
-
-    # cpp doesn't find system includes for some reason, suppress that report
-    set(CPPCHECK_OPTIONS ${CPPCHECK_OPTIONS} --suppress=missingIncludeSystem)
-
-    file(GLOB ALL_CODE src/*.cpp)
-
-    set(CPPCHECK_FILES ${ALL_CODE})
-
-    add_custom_target(cppcheck
-        ${CPPCHECK}
-        --std=c++11 ${CPPCHECK_OPTIONS}
-        ${CPPCHECK_FILES}
-    )
-else()
-    message(STATUS "Looking for cppcheck - not found")
-    message(STATUS "  Build target 'cppcheck' will not be available.")
-endif(CPPCHECK)
-
-
-#-----------------------------------------------------------------------------
-#
-#  Optional "iwyu" target to check headers
-#  http://include-what-you-use.org/
-#
-#-----------------------------------------------------------------------------
-find_program(IWYU_TOOL iwyu_tool.py)
-
-if(IWYU_TOOL)
-    message(STATUS "Looking for iwyu_tool.py - found")
-    add_custom_target(iwyu ${IWYU_TOOL} -p ${CMAKE_BINARY_DIR})
-else()
-    message(STATUS "Looking for iwyu_tool.py - not found")
-    message(STATUS "  Make target iwyu not available")
-endif()
 
 
 #-----------------------------------------------------------------------------

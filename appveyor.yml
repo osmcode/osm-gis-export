@@ -76,6 +76,8 @@ build_script:
     -DPROJ_INCLUDE_DIR=%LODEPSDIR%\proj\include
     -DGDAL_LIBRARY=%LODEPSDIR%\gdal\lib\gdal_i.lib
     -DGDAL_INCLUDE_DIR=%LODEPSDIR%\gdal\include
+    -DGETOPT_LIBRARY=%LODEPSDIR%\wingetopt\lib\wingetopt.lib
+    -DGETOPT_INCLUDE_DIR=%LODEPSDIR%\wingetopt\include
   - msbuild osm-gis-export.sln /p:Configuration=%config% /toolsversion:14.0 /p:Platform=x64 /p:PlatformToolset=v140
 #  - cmake .. -LA -G "NMake Makefiles"
 #    -DOsmium_DEBUG=TRUE
