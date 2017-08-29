@@ -4,57 +4,204 @@
 #
 #-----------------------------------------------------------------------------
 
-language: cpp
+language: generic
 
 sudo: false
 
-matrix:
-    include:
-        - os: linux
-          compiler: clang
-          env: BUILD_TYPE=Dev
-        - os: linux
-          compiler: clang
-          env: BUILD_TYPE=Release
-        - os: linux
-          compiler: gcc
-          env: BUILD_TYPE=Dev
-        - os: linux
-          compiler: gcc
-          env: BUILD_TYPE=Release
+dist: trusty
 
-# http://docs.travis-ci.com/user/apt/
-addons:
-    apt:
-        sources:
-            - boost-latest
-            - ubuntu-toolchain-r-test
-        packages:
-            - g++-4.8
-            - gcc-4.8
-            - libboost1.55-dev
-            - libboost-program-options1.55-dev
-            - libgdal-dev
-            - libproj-dev
+#-----------------------------------------------------------------------------
+
+matrix:
+  include:
+
+    # 1/ Linux Clang Builds
+    - os: linux
+      compiler: linux-clang38-release
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['clang-3.8', 'libboost1.55-dev', 'libboost-filesystem1.55-dev', 'libboost-program-options1.55-dev', 'libgdal-dev', 'libproj-dev']
+      env: COMPILER='clang++-3.8' BUILD_TYPE='Release'
+
+    - os: linux
+      compiler: linux-clang38-dev
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['clang-3.8', 'libboost1.55-dev', 'libboost-filesystem1.55-dev', 'libboost-program-options1.55-dev', 'libgdal-dev', 'libproj-dev']
+      env: COMPILER='clang++-3.8' BUILD_TYPE='Dev'
+
+
+    - os: linux
+      compiler: linux-clang39-release
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['clang-3.9', 'libboost1.55-dev', 'libboost-filesystem1.55-dev', 'libboost-program-options1.55-dev', 'libgdal-dev', 'libproj-dev']
+      env: COMPILER='clang++-3.9' BUILD_TYPE='Release'
+
+    - os: linux
+      compiler: linux-clang39-dev
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['clang-3.9', 'libboost1.55-dev', 'libboost-filesystem1.55-dev', 'libboost-program-options1.55-dev', 'libgdal-dev', 'libproj-dev']
+      env: COMPILER='clang++-3.9' BUILD_TYPE='Dev'
+
+
+    - os: linux
+      compiler: linux-clang40-release
+      addons:
+        apt:
+          sources: ['llvm-toolchain-trusty-4.0', 'ubuntu-toolchain-r-test']
+          packages: ['clang-4.0', 'libboost1.55-dev', 'libboost-filesystem1.55-dev', 'libboost-program-options1.55-dev', 'libgdal-dev', 'libproj-dev']
+      env: COMPILER='clang++-4.0' BUILD_TYPE='Release'
+
+    - os: linux
+      compiler: linux-clang40-dev
+      addons:
+        apt:
+          sources: ['llvm-toolchain-trusty-4.0', 'ubuntu-toolchain-r-test']
+          packages: ['clang-4.0', 'libboost1.55-dev', 'libboost-filesystem1.55-dev', 'libboost-program-options1.55-dev', 'libgdal-dev', 'libproj-dev']
+      env: COMPILER='clang++-4.0' BUILD_TYPE='Dev'
+
+
+    - os: linux
+      compiler: linux-clang50-release
+      addons:
+        apt:
+          sources: ['llvm-toolchain-trusty-5.0', 'ubuntu-toolchain-r-test']
+          packages: ['clang-5.0', 'libboost1.55-dev', 'libboost-filesystem1.55-dev', 'libboost-program-options1.55-dev', 'libgdal-dev', 'libproj-dev']
+      env: COMPILER='clang++-5.0' BUILD_TYPE='Release'
+
+    - os: linux
+      compiler: linux-clang50-dev
+      addons:
+        apt:
+          sources: ['llvm-toolchain-trusty-5.0', 'ubuntu-toolchain-r-test']
+          packages: ['clang-5.0', 'libboost1.55-dev', 'libboost-filesystem1.55-dev', 'libboost-program-options1.55-dev', 'libgdal-dev', 'libproj-dev']
+      env: COMPILER='clang++-5.0' BUILD_TYPE='Dev'
+
+
+    # 2/ Linux GCC Builds
+    - os: linux
+      compiler: linux-gcc48-release
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['g++-4.8', 'libboost1.55-dev', 'libboost-filesystem1.55-dev', 'libboost-program-options1.55-dev', 'libgdal-dev', 'libproj-dev']
+      env: COMPILER='g++-4.8' COMPILER_FLAGS='-Wno-return-type' BUILD_TYPE='Release'
+
+    - os: linux
+      compiler: linux-gcc48-dev
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['g++-4.8', 'libboost1.55-dev', 'libboost-filesystem1.55-dev', 'libboost-program-options1.55-dev', 'libgdal-dev', 'libproj-dev']
+      env: COMPILER='g++-4.8' COMPILER_FLAGS='-Wno-return-type' BUILD_TYPE='Dev'
+
+
+    - os: linux
+      compiler: linux-gcc49-release
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['g++-4.9', 'libboost1.55-dev', 'libboost-filesystem1.55-dev', 'libboost-program-options1.55-dev', 'libgdal-dev', 'libproj-dev']
+      env: COMPILER='g++-4.9' BUILD_TYPE='Release'
+
+    - os: linux
+      compiler: linux-gcc49-dev
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['g++-4.9', 'libboost1.55-dev', 'libboost-filesystem1.55-dev', 'libboost-program-options1.55-dev', 'libgdal-dev', 'libproj-dev']
+      env: COMPILER='g++-4.9' BUILD_TYPE='Dev'
+
+
+    - os: linux
+      compiler: linux-gcc5-release
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['g++-5', 'libboost1.55-dev', 'libboost-filesystem1.55-dev', 'libboost-program-options1.55-dev', 'libgdal-dev', 'libproj-dev']
+      env: COMPILER='g++-5' BUILD_TYPE='Release'
+
+    - os: linux
+      compiler: linux-gcc5-dev
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['g++-5', 'libboost1.55-dev', 'libboost-filesystem1.55-dev', 'libboost-program-options1.55-dev', 'libgdal-dev', 'libproj-dev']
+      env: COMPILER='g++-5' BUILD_TYPE='Dev'
+
+
+    - os: linux
+      compiler: linux-gcc6-release
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['g++-6', 'libboost1.55-dev', 'libboost-filesystem1.55-dev', 'libboost-program-options1.55-dev', 'libgdal-dev', 'libproj-dev']
+      env: COMPILER='g++-6' BUILD_TYPE='Release'
+
+    - os: linux
+      compiler: linux-gcc6-dev
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test']
+          packages: ['g++-6', 'libboost1.55-dev', 'libboost-filesystem1.55-dev', 'libboost-program-options1.55-dev', 'libgdal-dev', 'libproj-dev']
+      env: COMPILER='g++-6' BUILD_TYPE='Dev'
+
+
+    # 3/ OSX Clang Builds
+    - os: osx
+      osx_image: xcode6.4
+      compiler: xcode64-clang-release
+      env: COMPILER='clang++' BUILD_TYPE='Release'
+
+    - os: osx
+      osx_image: xcode6.4
+      compiler: xcode64-clang-dev
+      env: COMPILER='clang++' BUILD_TYPE='Dev'
+
+
+    - os: osx
+      osx_image: xcode7
+      compiler: xcode7-clang-release
+      env: COMPILER='clang++' BUILD_TYPE='Release'
+
+    - os: osx
+      osx_image: xcode7
+      compiler: xcode7-clang-dev
+      env: COMPILER='clang++' BUILD_TYPE='Dev'
+
+
+    - os: osx
+      osx_image: xcode8.3
+      compiler: xcode8-clang-release
+      env: COMPILER='clang++' BUILD_TYPE='Release'
+
+    - os: osx
+      osx_image: xcode8.3
+      compiler: xcode8-clang-dev
+      env: COMPILER='clang++' BUILD_TYPE='Dev'
+
+#-----------------------------------------------------------------------------
 
 install:
-    - git clone --quiet --depth 1 https://github.com/osmcode/libosmium.git ../libosmium
+  - git clone --quiet --depth 1 https://github.com/osmcode/libosmium.git ../libosmium
+  - |
+    if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
+      brew install cmake || true
+    fi
+  - cmake --version
+
+before_script:
+  - cd ${TRAVIS_BUILD_DIR}
+  - mkdir build && cd build
+  - CXX=${COMPILER} CXXFLAGS=${COMPILER_FLAGS} cmake -LA .. -DCMAKE_BUILD_TYPE=${BUILD_TYPE}
 
 script:
-    - mkdir build
-    - cd build
-    # GCC ignores the pragmas in the code that disable the "return-type" warning selectively, so use this workaround
-    - if [ "${CXX}" = 'g++' ]; then
-          CXX=g++-4.8;
-          CC=gcc-4.8;
-          WORKAROUND="-DCMAKE_CXX_FLAGS=-Wno-return-type";
-      else
-          WORKAROUND="";
-      fi
-    - echo "travis_fold:start:cmake\nRunning cmake..."
-    - cmake -LA -DCMAKE_BUILD_TYPE=${BUILD_TYPE} ${WORKAROUND} ..
-    - echo "travis_fold:end:cmake"
-    - echo "travis_fold:start:make\nRunning make..."
-    - make VERBOSE=1
-    - echo "travis_fold:end:make"
+  - make VERBOSE=1
 
+#-----------------------------------------------------------------------------
