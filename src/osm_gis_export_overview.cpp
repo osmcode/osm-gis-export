@@ -8,19 +8,17 @@
 
 #include <gdalcpp.hpp>
 
-#include <osmium/index/map/flex_mem.hpp> // IWYU pragma: keep
-
-#include <osmium/handler/node_locations_for_ways.hpp>
-#include <osmium/visitor.hpp>
-#include <osmium/area/multipolygon_collector.hpp>
 #include <osmium/area/assembler.hpp>
-
+#include <osmium/area/multipolygon_manager.hpp>
 #include <osmium/geom/factory.hpp>
 #include <osmium/geom/ogr.hpp>
-#include <osmium/io/any_input.hpp> // IWYU pragma: keep
 #include <osmium/handler.hpp>
+#include <osmium/handler/node_locations_for_ways.hpp>
+#include <osmium/index/map/flex_mem.hpp> // IWYU pragma: keep
+#include <osmium/io/any_input.hpp> // IWYU pragma: keep
 #include <osmium/util/memory.hpp>
 #include <osmium/util/verbose_output.hpp>
+#include <osmium/visitor.hpp>
 
 using index_type = osmium::index::map::FlexMem<osmium::unsigned_object_id_type, osmium::Location>;
 using location_handler_type = osmium::handler::NodeLocationsForWays<index_type>;
@@ -237,16 +235,16 @@ int main(int argc, char* argv[]) {
     osmium::util::VerboseOutput vout{cfg.verbose};
     vout << "Writing to '" << output_filename << "'\n";
 
+    osmium::io::File input_file{input_filename};
+
     osmium::area::Assembler::config_type assembler_config;
     if (debug) {
         assembler_config.debug_level = 1;
     }
-    osmium::area::MultipolygonCollector<osmium::area::Assembler> collector{assembler_config};
+    osmium::area::MultipolygonManager<osmium::area::Assembler> mp_manager{assembler_config};
 
     vout << "Pass 1...\n";
-    osmium::io::Reader reader1(input_filename);
-    collector.read_relations(reader1);
-    reader1.close();
+    osmium::relations::read_relations(input_file, mp_manager);
     vout << "Pass 1 done\n";
 
     index_type index_pos;
@@ -265,22 +263,25 @@ int main(int argc, char* argv[]) {
     MyOGRHandler<decltype(factory)::projection_type> ogr_handler(dataset, factory, cfg);
 
     vout << "Pass 2...\n";
-    osmium::io::Reader reader2{input_filename};
+    osmium::io::Reader reader{input_file};
 
-    osmium::apply(reader2, location_handler, ogr_handler, collector.handler([&ogr_handler](const osmium::memory::Buffer& area_buffer) {
+    osmium::apply(reader, location_handler, ogr_handler, mp_manager.handler([&ogr_handler](const osmium::memory::Buffer& area_buffer) {
         osmium::apply(area_buffer, ogr_handler);
     }));
 
-    reader2.close();
+    reader.close();
     vout << "Pass 2 done\n";
 
-    auto incomplete_relations = collector.get_incomplete_relations();
-    if (!incomplete_relations.empty()) {
+    std::vector<osmium::object_id_type> incomplete_relations_ids;
+    mp_manager.for_each_incomplete_relation([&](const osmium::relations::RelationHandle& handle){
+        incomplete_relations_ids.push_back(handle->id());
+    });
+    if (!incomplete_relations_ids.empty()) {
         std::cerr << "Warning! Some member ways missing for these multipolygon relations:";
-        for (const auto* relation : incomplete_relations) {
-            std::cerr << " " << relation->id();
+        for (const auto id : incomplete_relations_ids) {
+            std::cerr << " " << id;
         }
-        std::cerr << '\n';
+        std::cerr << "\n";
     }
 
     osmium::MemoryUsage memory;
