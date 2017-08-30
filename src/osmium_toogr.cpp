@@ -102,7 +102,7 @@ int main(int argc, char* argv[]) {
     };
 
     std::string output_format{"SQLite"};
-    std::string location_store{"sparse_mem_array"};
+    std::string location_store{"flex_mem"};
 
     while (true) {
         int c = getopt_long(argc, argv, "hf:l:L", long_options, 0);
@@ -159,11 +159,13 @@ int main(int argc, char* argv[]) {
     osmium::apply(reader, location_handler, ogr_handler);
     reader.close();
 
-    int locations_fd = ::open("locations.dump", O_WRONLY | O_CREAT, 0644);
+/*
+    const int locations_fd = ::open("locations.dump", O_WRONLY | O_CREAT, 0644);
     if (locations_fd < 0) {
         throw std::system_error{errno, std::system_category(), "Open failed"};
     }
     index->dump_as_list(locations_fd);
     ::close(locations_fd);
+*/
 }
 

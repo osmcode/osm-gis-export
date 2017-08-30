@@ -8,7 +8,7 @@
 
 #include <gdalcpp.hpp>
 
-#include <osmium/index/map/sparse_mem_array.hpp> // IWYU pragma: keep
+#include <osmium/index/map/flex_mem.hpp> // IWYU pragma: keep
 
 #include <osmium/handler/node_locations_for_ways.hpp>
 #include <osmium/visitor.hpp>
@@ -22,7 +22,7 @@
 #include <osmium/util/memory.hpp>
 #include <osmium/util/verbose_output.hpp>
 
-using index_type = osmium::index::map::SparseMemArray<osmium::unsigned_object_id_type, osmium::Location>;
+using index_type = osmium::index::map::FlexMem<osmium::unsigned_object_id_type, osmium::Location>;
 using location_handler_type = osmium::handler::NodeLocationsForWays<index_type>;
 
 struct config {

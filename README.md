@@ -6,14 +6,14 @@ THIS IS A VERY PRELIMINARY VERSION JUST MOVED HERE FROM THE LIBOSMIUM EXAMPLES!
 A bunch of programs to export OSM data into GIS formats such as Shapefiles,
 PostgreSQL or Spatialite.
 
-[![Build Status](https://secure.travis-ci.org/osmcode/osm-gis-export.png)](http://travis-ci.org/osmcode/osm-gis-export)
+[![Build Status](https://secure.travis-ci.org/osmcode/osm-gis-export.svg)](http://travis-ci.org/osmcode/osm-gis-export)
 [![Build status](https://ci.appveyor.com/api/projects/status/github/osmcode/osm-gis-export?svg=true)](https://ci.appveyor.com/project/Mapbox/osm-gis-export)
 
 Sorry, do docs yet. You have to look at the source code and change it according
 to your needs. This software can be used as basis for your own experiments, but
 you need to understand C++ for that. There is no one-size-fits-all solution
-here. Use osmium_toogr as a basis if you only need nodes or ways, no
-(multi)polygons. Use osmium_toogr2 as basis if you also need multipolygon
+here. Use `osmium_toogr` as a basis if you only need nodes or ways, no
+(multi)polygons. Use `osmium_toogr2` as basis if you also need multipolygon
 support.
 
 
@@ -23,7 +23,7 @@ You need a C++11 compliant compiler. GCC 4.8 and later as well as clang 3.4 and
 later are known to work. You also need the following libraries:
 
     Osmium Library
-        Need at least version 2.9.0
+        Need at least version 2.13.1
         http://osmcode.org/libosmium
         Debian/Ubuntu: libosmium2-dev
 
