@@ -62,7 +62,7 @@ IF %ERRORLEVEL% NEQ 0 GOTO ERROR
 git pull
 IF %ERRORLEVEL% NEQ 0 GOTO ERROR
 
-CD %otdir%\..
+CD %ogedir%\..
 
 IF NOT EXIST protozero ECHO cloning protozero && git clone --depth 1 https://github.com/mapbox/protozero.git
 IF %ERRORLEVEL% NEQ 0 GOTO ERROR
