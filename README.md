@@ -6,7 +6,7 @@ THIS IS A VERY PRELIMINARY VERSION JUST MOVED HERE FROM THE LIBOSMIUM EXAMPLES!
 A bunch of programs to export OSM data into GIS formats such as Shapefiles,
 PostgreSQL or Spatialite.
 
-[![Build Status](https://secure.travis-ci.org/osmcode/osm-gis-export.svg)](http://travis-ci.org/osmcode/osm-gis-export)
+[![Build Status](https://secure.travis-ci.org/osmcode/osm-gis-export.svg)](https://travis-ci.org/osmcode/osm-gis-export)
 [![Build status](https://ci.appveyor.com/api/projects/status/github/osmcode/osm-gis-export?svg=true)](https://ci.appveyor.com/project/Mapbox/osm-gis-export)
 
 Sorry, do docs yet. You have to look at the source code and change it according
@@ -24,7 +24,7 @@ later are known to work. You also need the following libraries:
 
     Osmium Library
         Need at least version 2.13.1
-        http://osmcode.org/libosmium
+        https://osmcode.org/libosmium
         Debian/Ubuntu: libosmium2-dev
 
     Protozero
@@ -46,11 +46,11 @@ later are known to work. You also need the following libraries:
         Debian/Ubuntu: libbz2-dev
 
     CMake (for building)
-        http://www.cmake.org/
+        https://www.cmake.org/
         Debian/Ubuntu: cmake
 
     Expat (for parsing XML files)
-        http://expat.sourceforge.net/
+        https://libexpat.github.io
         Debian/Ubuntu: libexpat1-dev
         openSUSE: libexpat-devel
 
@@ -59,12 +59,12 @@ later are known to work. You also need the following libraries:
         Debian/Ubuntu: libgdal-dev
 
     zlib (for PBF support)
-        http://www.zlib.net/
+        https://www.zlib.net/
         Debian/Ubuntu: zlib1g-dev
         openSUSE: zlib-devel
 
     Proj.4
-        http://trac.osgeo.org/proj/
+        https://trac.osgeo.org/proj/
         Debian/Ubuntu: libproj-dev
 
 ## Installing dependencies
@@ -76,7 +76,7 @@ later are known to work. You also need the following libraries:
 
 ## Building
 
-[CMake](http://www.cmake.org) is used for building.
+[CMake](https://www.cmake.org) is used for building.
 
 To build run:
 

@@ -84,7 +84,7 @@ endif()
 #-----------------------------------------------------------------------------
 #
 #  Optional "iwyu" target to check headers
-#  http://include-what-you-use.org/
+#  https://include-what-you-use.org/
 #
 #-----------------------------------------------------------------------------
 find_program(IWYU_TOOL iwyu_tool.py)
