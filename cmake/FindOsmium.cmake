@@ -71,6 +71,9 @@ find_path(OSMIUM_INCLUDE_DIR osmium/version.hpp
 
 # Check libosmium version number
 if(Osmium_FIND_VERSION)
+    if(NOT EXISTS "${OSMIUM_INCLUDE_DIR}/osmium/version.hpp")
+        message(FATAL_ERROR "Missing ${OSMIUM_INCLUDE_DIR}/osmium/version.hpp. Either your libosmium version is too old, or libosmium wasn't found in the place you said.")
+    endif()
     file(STRINGS "${OSMIUM_INCLUDE_DIR}/osmium/version.hpp" _libosmium_version_define REGEX "#define LIBOSMIUM_VERSION_STRING")
     if("${_libosmium_version_define}" MATCHES "#define LIBOSMIUM_VERSION_STRING \"([0-9.]+)\"")
         set(_libosmium_version "${CMAKE_MATCH_1}")
@@ -111,7 +114,7 @@ endif()
 if(Osmium_USE_PBF)
     find_package(ZLIB)
     find_package(Threads)
-    find_package(Protozero 1.5.1)
+    find_package(Protozero 1.6.3)
 
     list(APPEND OSMIUM_EXTRA_FIND_VARS ZLIB_FOUND Threads_FOUND PROTOZERO_INCLUDE_DIR)
     if(ZLIB_FOUND AND Threads_FOUND AND PROTOZERO_FOUND)
