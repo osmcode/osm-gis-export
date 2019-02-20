@@ -6,8 +6,10 @@ THIS IS A VERY PRELIMINARY VERSION JUST MOVED HERE FROM THE LIBOSMIUM EXAMPLES!
 A bunch of programs to export OSM data into GIS formats such as Shapefiles,
 PostgreSQL or Spatialite.
 
-[![Build Status](https://secure.travis-ci.org/osmcode/osm-gis-export.svg)](https://travis-ci.org/osmcode/osm-gis-export)
-[![Build status](https://ci.appveyor.com/api/projects/status/github/osmcode/osm-gis-export?svg=true)](https://ci.appveyor.com/project/Mapbox/osm-gis-export)
+[![Travis Build Status](https://secure.travis-ci.org/osmcode/osm-gis-export.svg)](https://travis-ci.org/osmcode/osm-gis-export)
+[![Appveyor Build Status](https://ci.appveyor.com/api/projects/status/39oln30a2wwdcami/branch/master?svg=true)](https://ci.appveyor.com/project/lonvia/osm-gis-export/branch/master)
+
+
 
 Sorry, do docs yet. You have to look at the source code and change it according
 to your needs. This software can be used as basis for your own experiments, but
