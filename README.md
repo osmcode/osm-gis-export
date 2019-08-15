@@ -7,7 +7,7 @@ A bunch of programs to export OSM data into GIS formats such as Shapefiles,
 PostgreSQL or Spatialite.
 
 [![Travis Build Status](https://secure.travis-ci.org/osmcode/osm-gis-export.svg)](https://travis-ci.org/osmcode/osm-gis-export)
-[![Appveyor Build Status](https://ci.appveyor.com/api/projects/status/39oln30a2wwdcami/branch/master?svg=true)](https://ci.appveyor.com/project/lonvia/osm-gis-export/branch/master)
+[![Appveyor Build status](https://ci.appveyor.com/api/projects/status/hx33x96nr1jr47by/branch/master?svg=true)](https://ci.appveyor.com/project/lonvia/osm-gis-export/branch/master)
 
 
 
