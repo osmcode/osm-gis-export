@@ -34,14 +34,9 @@ later are known to work. You also need the following libraries:
         https://github.com/mapbox/protozero
         Debian/Ubuntu: libprotozero-dev
 
-    Utfcpp
-        http://utfcpp.sourceforge.net/
-        Debian/Ubuntu: libutfcpp-dev
-        Also included in the libosmium repository.
-
     gdalcpp
         https://github.com/joto/gdalcpp
-        Also included in the libosmium repository.
+        Included in the libosmium repository.
 
     bz2lib (for reading and writing bzipped files)
         http://www.bzip.org/
@@ -57,7 +52,7 @@ later are known to work. You also need the following libraries:
         openSUSE: libexpat-devel
 
     GDAL/OGR
-        http://gdal.org/
+        https://gdal.org/
         Debian/Ubuntu: libgdal-dev
 
     zlib (for PBF support)
@@ -65,8 +60,8 @@ later are known to work. You also need the following libraries:
         Debian/Ubuntu: zlib1g-dev
         openSUSE: zlib-devel
 
-    Proj.4
-        https://trac.osgeo.org/proj/
+    PROJ
+        https://proj.org/
         Debian/Ubuntu: libproj-dev
 
 ## Installing dependencies
