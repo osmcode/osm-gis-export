@@ -10,7 +10,7 @@ dist: trusty
 
 #-----------------------------------------------------------------------------
 
-matrix:
+jobs:
   include:
 
     # Linux Clang Builds
