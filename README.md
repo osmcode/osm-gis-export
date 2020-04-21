@@ -67,6 +67,8 @@ later are known to work. You also need the following libraries:
 
     apt-get install cmake libosmium2-dev libgdal-dev libproj-dev
 
+In addition you might want to look at https://github.com/osmcode/osmium-proj if
+you are using PROJ 6 or above.
 
 ## Building
 
