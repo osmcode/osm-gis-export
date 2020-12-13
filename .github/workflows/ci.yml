@@ -1,0 +1,115 @@
+name: CI
+
+on: [ push, pull_request ]
+
+jobs:
+  ubuntu18-clang9-dev:
+    runs-on: ubuntu-18.04
+    env:
+      CC: clang-9
+      CXX: clang++-9
+      BUILD_TYPE: Dev
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./.github/actions/install-ubuntu
+      - uses: ./.github/actions/build
+
+  ubuntu20-clang10-dev:
+    runs-on: ubuntu-20.04
+    env:
+      CC: clang-10
+      CXX: clang++-10
+      BUILD_TYPE: Dev
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./.github/actions/install-ubuntu
+      - uses: ./.github/actions/build
+
+  ubuntu20-clang10-release:
+    runs-on: ubuntu-20.04
+    env:
+      CC: clang-10
+      CXX: clang++-10
+      BUILD_TYPE: Release
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./.github/actions/install-ubuntu
+      - uses: ./.github/actions/build
+
+  ubuntu16-gcc5-dev:
+    runs-on: ubuntu-16.04
+    env:
+      CC: gcc-5
+      CXX: g++-5
+      BUILD_TYPE: Dev
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./.github/actions/install-ubuntu
+      - uses: ./.github/actions/build
+
+  ubuntu18-gcc7-dev:
+    runs-on: ubuntu-18.04
+    env:
+      CC: gcc-7
+      CXX: g++-7
+      BUILD_TYPE: Dev
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./.github/actions/install-ubuntu
+      - uses: ./.github/actions/build
+
+  ubuntu20-gcc9-dev:
+    runs-on: ubuntu-20.04
+    env:
+      CC: gcc-9
+      CXX: g++-9
+      BUILD_TYPE: Dev
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./.github/actions/install-ubuntu
+      - uses: ./.github/actions/build
+
+  ubuntu20-gcc10-release:
+    runs-on: ubuntu-20.04
+    env:
+      CC: gcc-10
+      CXX: g++-10
+      BUILD_TYPE: Release
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./.github/actions/install-ubuntu
+      - uses: ./.github/actions/build
+
+  macos10-dev:
+    runs-on: macos-10.15
+    env:
+      CC: clang
+      CXX: clang++
+      BUILD_TYPE: Dev
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./.github/actions/install-macos
+      - uses: ./.github/actions/build
+
+  macos11-dev:
+    runs-on: macos-11.0
+    env:
+      CC: clang
+      CXX: clang++
+      BUILD_TYPE: Dev
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./.github/actions/install-macos
+      - uses: ./.github/actions/build
+
+  macos11-release:
+    runs-on: macos-11.0
+    env:
+      CC: clang
+      CXX: clang++
+      BUILD_TYPE: Release
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./.github/actions/install-macos
+      - uses: ./.github/actions/build
+
