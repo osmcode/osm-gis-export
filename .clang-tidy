@@ -1,0 +1,30 @@
+---
+Checks: '*,-abseil-*,-altera-*,-fuchsia-*,-cppcoreguidelines-avoid-magic-numbers,-google-runtime-references,-readability-implicit-bool-conversion,-readability-magic-numbers'
+#
+#  For a list of check options, see:
+#  https://clang.llvm.org/extra/clang-tidy/checks/list.html
+#
+#  Disabled checks:
+#
+#  abseil-*
+#    We are not using abseil.
+#
+#  altera-*
+#    Doesn't apply.
+#
+#  cppcoreguidelines-avoid-magic-numbers
+#  readability-magic-numbers
+#    Generally good advice, but there are too many places where this is
+#    useful, for instance in tests.
+#
+#  fuchsia-*
+#    Much too strict.
+#
+#  google-runtime-references
+#    This is just a matter of preference.
+#
+#  readability-implicit-bool-conversion
+#    I don't think this makes the code more readable.
+#
+#WarningsAsErrors: '*'
+...

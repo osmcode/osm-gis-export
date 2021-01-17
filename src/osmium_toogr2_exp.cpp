@@ -10,6 +10,17 @@
 
 */
 
+#include <gdalcpp.hpp>
+
+#include <osmium/experimental/flex_reader.hpp>
+#include <osmium/geom/mercator_projection.hpp>
+#include <osmium/geom/ogr.hpp>
+#include <osmium/handler.hpp>
+#include <osmium/index/map/sparse_mem_array.hpp> // IWYU pragma: keep
+#include <osmium/io/any_input.hpp> // IWYU pragma: keep
+#include <osmium/visitor.hpp>
+//#include <osmium/geom/projection.hpp>
+
 #include <cstdlib>
 #include <cstring>
 #include <exception>
@@ -17,19 +28,6 @@
 #include <iostream>
 #include <string>
 #include <vector>
-
-#include <gdalcpp.hpp>
-
-#include <osmium/index/map/sparse_mem_array.hpp> // IWYU pragma: keep
-
-#include <osmium/visitor.hpp>
-
-#include <osmium/geom/mercator_projection.hpp>
-//#include <osmium/geom/projection.hpp>
-#include <osmium/geom/ogr.hpp>
-#include <osmium/io/any_input.hpp> // IWYU pragma: keep
-#include <osmium/handler.hpp>
-#include <osmium/experimental/flex_reader.hpp>
 
 using index_type = osmium::index::map::SparseMemArray<osmium::unsigned_object_id_type, osmium::Location>;
 using location_handler_type = osmium::handler::NodeLocationsForWays<index_type>;
@@ -120,15 +118,15 @@ void print_help() {
 int main(int argc, char* argv[]) {
     try {
         static struct option long_options[] = {
-            {"help",   no_argument, 0, 'h'},
-            {"format", required_argument, 0, 'f'},
-            {0, 0, 0, 0}
+            {"help",   no_argument, nullptr, 'h'},
+            {"format", required_argument, nullptr, 'f'},
+            {nullptr, 0, nullptr, 0}
         };
 
         std::string output_format{"SQLite"};
 
         while (true) {
-            int c = getopt_long(argc, argv, "hf:", long_options, 0);
+            const int c = getopt_long(argc, argv, "hf:", long_options, nullptr);
             if (c == -1) {
                 break;
             }
@@ -147,11 +145,13 @@ int main(int argc, char* argv[]) {
 
         std::string input_filename;
         std::string output_filename{"ogr_out"};
-        int remaining_args = argc - optind;
+        const int remaining_args = argc - optind;
         if (remaining_args > 2) {
             std::cerr << "Usage: " << argv[0] << " [OPTIONS] [INFILE [OUTFILE]]\n";
             return 1;
-        } else if (remaining_args == 2) {
+        }
+
+        if (remaining_args == 2) {
             input_filename =  argv[optind];
             output_filename = argv[optind+1];
         } else if (remaining_args == 1) {

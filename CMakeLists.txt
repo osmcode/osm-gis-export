@@ -83,6 +83,32 @@ endif()
 
 #-----------------------------------------------------------------------------
 #
+#  Optional "clang-tidy" target
+#
+#-----------------------------------------------------------------------------
+message(STATUS "Looking for clang-tidy")
+find_program(CLANG_TIDY NAMES clang-tidy clang-tidy-12 clang-tidy-11 clang-tidy-10 clang-tidy-9 clang-tidy-8)
+
+if(CLANG_TIDY)
+    message(STATUS "Looking for clang-tidy - found ${CLANG_TIDY}")
+
+    add_custom_target(clang-tidy
+        ${CLANG_TIDY}
+        -p ${CMAKE_BINARY_DIR}
+        osm_gis_export_overview.cpp
+        osmium_toogr.cpp
+        osmium_toogr2.cpp
+        osmium_toogr2_exp.cpp
+        WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/src"
+    )
+else()
+    message(STATUS "Looking for clang-tidy - not found")
+    message(STATUS "  Build target 'clang-tidy' will not be available.")
+endif()
+
+
+#-----------------------------------------------------------------------------
+#
 #  Optional "iwyu" target to check headers
 #  https://include-what-you-use.org/
 #

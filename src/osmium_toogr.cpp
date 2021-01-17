@@ -5,6 +5,15 @@
 
 */
 
+#include <gdalcpp.hpp>
+
+#include <osmium/geom/ogr.hpp>
+#include <osmium/handler.hpp>
+#include <osmium/handler/node_locations_for_ways.hpp>
+#include <osmium/index/map/all.hpp> // IWYU pragma: keep
+#include <osmium/io/any_input.hpp> // IWYU pragma: keep
+#include <osmium/visitor.hpp>
+
 #include <cerrno>
 #include <cstdlib>
 #include <cstring>
@@ -18,16 +27,6 @@
 #ifndef _MSC_VER
 # include <unistd.h>
 #endif
-
-#include <gdalcpp.hpp>
-
-#include <osmium/index/map/all.hpp> // IWYU pragma: keep
-#include <osmium/handler/node_locations_for_ways.hpp>
-#include <osmium/visitor.hpp>
-
-#include <osmium/geom/ogr.hpp>
-#include <osmium/io/any_input.hpp> // IWYU pragma: keep
-#include <osmium/handler.hpp>
 
 using index_type = osmium::index::map::Map<osmium::unsigned_object_id_type, osmium::Location>;
 using location_handler_type = osmium::handler::NodeLocationsForWays<index_type>;
@@ -96,18 +95,18 @@ int main(int argc, char* argv[]) {
         const auto& map_factory = osmium::index::MapFactory<osmium::unsigned_object_id_type, osmium::Location>::instance();
 
         static struct option long_options[] = {
-            {"help",                 no_argument,       0, 'h'},
-            {"format",               required_argument, 0, 'f'},
-            {"location_store",       required_argument, 0, 'l'},
-            {"list_location_stores", no_argument,       0, 'L'},
-            {0, 0, 0, 0}
+            {"help",                 no_argument,       nullptr, 'h'},
+            {"format",               required_argument, nullptr, 'f'},
+            {"location_store",       required_argument, nullptr, 'l'},
+            {"list_location_stores", no_argument,       nullptr, 'L'},
+            {nullptr, 0, nullptr, 0}
         };
 
         std::string output_format{"SQLite"};
         std::string location_store{"flex_mem"};
 
         while (true) {
-            int c = getopt_long(argc, argv, "hf:l:L", long_options, 0);
+            const int c = getopt_long(argc, argv, "hf:l:L", long_options, nullptr);
             if (c == -1) {
                 break;
             }
@@ -135,11 +134,13 @@ int main(int argc, char* argv[]) {
 
         std::string input_filename;
         std::string output_filename{"ogr_out"};
-        int remaining_args = argc - optind;
+        const int remaining_args = argc - optind;
         if (remaining_args > 2) {
             std::cerr << "Usage: " << argv[0] << " [OPTIONS] [INFILE [OUTFILE]]\n";
             return 1;
-        } else if (remaining_args == 2) {
+        }
+
+        if (remaining_args == 2) {
             input_filename =  argv[optind];
             output_filename = argv[optind+1];
         } else if (remaining_args == 1) {
