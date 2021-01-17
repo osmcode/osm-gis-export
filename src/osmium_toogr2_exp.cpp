@@ -12,6 +12,7 @@
 
 #include <cstdlib>
 #include <cstring>
+#include <exception>
 #include <getopt.h>
 #include <iostream>
 #include <string>
@@ -117,82 +118,89 @@ void print_help() {
 }
 
 int main(int argc, char* argv[]) {
-    static struct option long_options[] = {
-        {"help",   no_argument, 0, 'h'},
-        {"format", required_argument, 0, 'f'},
-        {0, 0, 0, 0}
-    };
+    try {
+        static struct option long_options[] = {
+            {"help",   no_argument, 0, 'h'},
+            {"format", required_argument, 0, 'f'},
+            {0, 0, 0, 0}
+        };
 
-    std::string output_format{"SQLite"};
+        std::string output_format{"SQLite"};
 
-    while (true) {
-        int c = getopt_long(argc, argv, "hf:", long_options, 0);
-        if (c == -1) {
-            break;
-        }
-
-        switch (c) {
-            case 'h':
-                print_help();
-                std::exit(0);
-            case 'f':
-                output_format = optarg;
+        while (true) {
+            int c = getopt_long(argc, argv, "hf:", long_options, 0);
+            if (c == -1) {
                 break;
-            default:
-                std::exit(1);
+            }
+
+            switch (c) {
+                case 'h':
+                    print_help();
+                    return 0;
+                case 'f':
+                    output_format = optarg;
+                    break;
+                default:
+                    return 1;
+            }
         }
-    }
 
-    std::string input_filename;
-    std::string output_filename{"ogr_out"};
-    int remaining_args = argc - optind;
-    if (remaining_args > 2) {
-        std::cerr << "Usage: " << argv[0] << " [OPTIONS] [INFILE [OUTFILE]]\n";
-        std::exit(1);
-    } else if (remaining_args == 2) {
-        input_filename =  argv[optind];
-        output_filename = argv[optind+1];
-    } else if (remaining_args == 1) {
-        input_filename =  argv[optind];
-    } else {
-        input_filename = "-";
-    }
-
-    index_type index;
-    location_handler_type location_handler{index};
-    osmium::experimental::FlexReader<location_handler_type> exr{input_filename, location_handler, osmium::osm_entity_bits::object};
-
-    // Choose one of the following:
-
-    // 1. Use WGS84, do not project coordinates.
-    //osmium::geom::OGRFactory<> factory {};
-
-    // 2. Project coordinates into "Web Mercator".
-    osmium::geom::OGRFactory<osmium::geom::MercatorProjection> factory;
-
-    // 3. Use any projection that the proj library can handle.
-    //    (Initialize projection with EPSG code or proj string).
-    //    In addition you need to link with "-lproj" and add
-    //    #include <osmium/geom/projection.hpp>.
-    //osmium::geom::OGRFactory<osmium::geom::Projection> factory {osmium::geom::Projection(3857)};
-
-    CPLSetConfigOption("OGR_SQLITE_SYNCHRONOUS", "OFF");
-    gdalcpp::Dataset dataset{output_format, output_filename, gdalcpp::SRS{factory.proj_string()}, { "SPATIALITE=TRUE", "INIT_WITH_EPSG=no" }};
-    MyOGRHandler<decltype(factory)::projection_type> ogr_handler{dataset, factory};
-
-    while (auto buffer = exr.read()) {
-        osmium::apply(buffer, ogr_handler);
-    }
-
-    exr.close();
-
-    std::vector<const osmium::Relation*> incomplete_relations = exr.collector().get_incomplete_relations();
-    if (!incomplete_relations.empty()) {
-        std::cerr << "Warning! Some member ways missing for these multipolygon relations:";
-        for (const auto* relation : incomplete_relations) {
-            std::cerr << " " << relation->id();
+        std::string input_filename;
+        std::string output_filename{"ogr_out"};
+        int remaining_args = argc - optind;
+        if (remaining_args > 2) {
+            std::cerr << "Usage: " << argv[0] << " [OPTIONS] [INFILE [OUTFILE]]\n";
+            return 1;
+        } else if (remaining_args == 2) {
+            input_filename =  argv[optind];
+            output_filename = argv[optind+1];
+        } else if (remaining_args == 1) {
+            input_filename =  argv[optind];
+        } else {
+            input_filename = "-";
         }
-        std::cerr << "\n";
+
+        index_type index;
+        location_handler_type location_handler{index};
+        osmium::experimental::FlexReader<location_handler_type> exr{input_filename, location_handler, osmium::osm_entity_bits::object};
+
+        // Choose one of the following:
+
+        // 1. Use WGS84, do not project coordinates.
+        //osmium::geom::OGRFactory<> factory {};
+
+        // 2. Project coordinates into "Web Mercator".
+        osmium::geom::OGRFactory<osmium::geom::MercatorProjection> factory;
+
+        // 3. Use any projection that the proj library can handle.
+        //    (Initialize projection with EPSG code or proj string).
+        //    In addition you need to link with "-lproj" and add
+        //    #include <osmium/geom/projection.hpp>.
+        //osmium::geom::OGRFactory<osmium::geom::Projection> factory {osmium::geom::Projection(3857)};
+
+        CPLSetConfigOption("OGR_SQLITE_SYNCHRONOUS", "OFF");
+        gdalcpp::Dataset dataset{output_format, output_filename, gdalcpp::SRS{factory.proj_string()}, { "SPATIALITE=TRUE", "INIT_WITH_EPSG=no" }};
+        MyOGRHandler<decltype(factory)::projection_type> ogr_handler{dataset, factory};
+
+        while (auto buffer = exr.read()) {
+            osmium::apply(buffer, ogr_handler);
+        }
+
+        exr.close();
+
+        std::vector<const osmium::Relation*> incomplete_relations = exr.collector().get_incomplete_relations();
+        if (!incomplete_relations.empty()) {
+            std::cerr << "Warning! Some member ways missing for these multipolygon relations:";
+            for (const auto* relation : incomplete_relations) {
+                std::cerr << " " << relation->id();
+            }
+            std::cerr << "\n";
+        }
+    } catch (const std::exception& e) {
+        std::cerr << "Error: " << e.what() << '\n';
+        return 1;
     }
+
+    return 0;
 }
 

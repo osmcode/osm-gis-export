@@ -1,6 +1,7 @@
 
 #include <cstdint>
 #include <cstdlib>
+#include <exception>
 #include <iostream>
 #include <string>
 
@@ -152,141 +153,148 @@ void print_help(const po::options_description& desc) {
 }
 
 int main(int argc, char* argv[]) {
-    po::options_description desc("OPTIONS");
-    desc.add_options()
-        ("help,h", "Print usage information")
-        ("verbose,v", "Enable verbose output")
-        ("output,o", po::value<std::string>(), "Output file name")
-        ("output-format,f", po::value<std::string>()->default_value("SQLite"), "Output OGR format (Default: 'SQLite')")
-        ("add-untagged-nodes", "Add untagged nodes to point layer")
-        ("add-metadata", "Add columns for version, changeset, timestamp, uid, and user")
-        ("features-per-transaction", po::value<int>()->default_value(100000), "Number of features to add per transaction")
-    ;
+    try {
+        po::options_description desc("OPTIONS");
+        desc.add_options()
+            ("help,h", "Print usage information")
+            ("verbose,v", "Enable verbose output")
+            ("output,o", po::value<std::string>(), "Output file name")
+            ("output-format,f", po::value<std::string>()->default_value("SQLite"), "Output OGR format (Default: 'SQLite')")
+            ("add-untagged-nodes", "Add untagged nodes to point layer")
+            ("add-metadata", "Add columns for version, changeset, timestamp, uid, and user")
+            ("features-per-transaction", po::value<int>()->default_value(100000), "Number of features to add per transaction")
+        ;
 
-    po::options_description hidden;
-    hidden.add_options()
-    ("input-filename", po::value<std::string>(), "OSM input file")
-    ;
+        po::options_description hidden;
+        hidden.add_options()
+        ("input-filename", po::value<std::string>(), "OSM input file")
+        ;
 
-    po::options_description parsed_options;
-    parsed_options.add(desc).add(hidden);
+        po::options_description parsed_options;
+        parsed_options.add(desc).add(hidden);
 
-    po::positional_options_description positional;
-    positional.add("input-filename", 1);
+        po::positional_options_description positional;
+        positional.add("input-filename", 1);
 
-    po::variables_map vm;
-    po::store(po::command_line_parser(argc, argv).options(parsed_options).positional(positional).run(), vm);
-    po::notify(vm);
+        po::variables_map vm;
+        po::store(po::command_line_parser(argc, argv).options(parsed_options).positional(positional).run(), vm);
+        po::notify(vm);
 
-    std::string input_filename;
-    std::string output_filename;
-    std::string output_format{"SQLite"};
-    bool debug = false;
+        std::string input_filename;
+        std::string output_filename;
+        std::string output_format{"SQLite"};
+        bool debug = false;
 
-    config cfg;
+        config cfg;
 
-    if (vm.count("help")) {
-        print_help(desc);
-        std::exit(0);
-    }
+        if (vm.count("help")) {
+            print_help(desc);
+            return 0;
+        }
 
-    if (vm.count("verbose")) {
-        cfg.verbose = true;
-    }
+        if (vm.count("verbose")) {
+            cfg.verbose = true;
+        }
 
-    if (vm.count("output-format")) {
-        output_format = vm["output-format"].as<std::string>();
-    }
+        if (vm.count("output-format")) {
+            output_format = vm["output-format"].as<std::string>();
+        }
 
-    if (vm.count("input-filename")) {
-        input_filename = vm["input-filename"].as<std::string>();
-    }
+        if (vm.count("input-filename")) {
+            input_filename = vm["input-filename"].as<std::string>();
+        }
 
-    if (vm.count("output")) {
-        output_filename = vm["output"].as<std::string>();
-    } else {
-        auto slash = input_filename.rfind('/');
-        if (slash == std::string::npos) {
-            slash = 0;
+        if (vm.count("output")) {
+            output_filename = vm["output"].as<std::string>();
         } else {
-            ++slash;
+            auto slash = input_filename.rfind('/');
+            if (slash == std::string::npos) {
+                slash = 0;
+            } else {
+                ++slash;
+            }
+            output_filename = input_filename.substr(slash);
+            auto dot = output_filename.find('.');
+            if (dot != std::string::npos) {
+                output_filename.erase(dot);
+            }
+            output_filename.append(".db");
         }
-        output_filename = input_filename.substr(slash);
-        auto dot = output_filename.find('.');
-        if (dot != std::string::npos) {
-            output_filename.erase(dot);
+
+        int features_per_transaction = 0;
+        if (vm.count("features-per-transaction")) {
+            features_per_transaction = vm["features-per-transaction"].as<int>();
         }
-        output_filename.append(".db");
-    }
 
-    int features_per_transaction = 0;
-    if (vm.count("features-per-transaction")) {
-        features_per_transaction = vm["features-per-transaction"].as<int>();
-    }
-
-    if (vm.count("add-untagged-nodes")) {
-        cfg.add_untagged_nodes = true;
-    }
-
-    if (vm.count("add-metadata")) {
-        cfg.add_metadata = true;
-    }
-
-    osmium::util::VerboseOutput vout{cfg.verbose};
-    vout << "Writing to '" << output_filename << "'\n";
-
-    osmium::io::File input_file{input_filename};
-
-    osmium::area::Assembler::config_type assembler_config;
-    if (debug) {
-        assembler_config.debug_level = 1;
-    }
-    osmium::area::MultipolygonManager<osmium::area::Assembler> mp_manager{assembler_config};
-
-    vout << "Pass 1...\n";
-    osmium::relations::read_relations(input_file, mp_manager);
-    vout << "Pass 1 done\n";
-
-    index_type index_pos;
-    location_handler_type location_handler{index_pos};
-    location_handler.ignore_errors();
-
-    osmium::geom::OGRFactory<> factory {};
-
-    CPLSetConfigOption("OGR_SQLITE_SYNCHRONOUS", "OFF");
-    gdalcpp::Dataset dataset{output_format, output_filename, gdalcpp::SRS{factory.proj_string()}, { "SPATIALITE=TRUE", "INIT_WITH_EPSG=no" }};
-    dataset.exec("PRAGMA journal_mode = OFF;");
-    if (features_per_transaction) {
-        dataset.enable_auto_transactions(features_per_transaction);
-    }
-
-    MyOGRHandler<decltype(factory)::projection_type> ogr_handler(dataset, factory, cfg);
-
-    vout << "Pass 2...\n";
-    osmium::io::Reader reader{input_file};
-
-    osmium::apply(reader, location_handler, ogr_handler, mp_manager.handler([&ogr_handler](const osmium::memory::Buffer& area_buffer) {
-        osmium::apply(area_buffer, ogr_handler);
-    }));
-
-    reader.close();
-    vout << "Pass 2 done\n";
-
-    std::vector<osmium::object_id_type> incomplete_relations_ids;
-    mp_manager.for_each_incomplete_relation([&](const osmium::relations::RelationHandle& handle){
-        incomplete_relations_ids.push_back(handle->id());
-    });
-    if (!incomplete_relations_ids.empty()) {
-        std::cerr << "Warning! Some member ways missing for these multipolygon relations:";
-        for (const auto id : incomplete_relations_ids) {
-            std::cerr << " " << id;
+        if (vm.count("add-untagged-nodes")) {
+            cfg.add_untagged_nodes = true;
         }
-        std::cerr << "\n";
+
+        if (vm.count("add-metadata")) {
+            cfg.add_metadata = true;
+        }
+
+        osmium::util::VerboseOutput vout{cfg.verbose};
+        vout << "Writing to '" << output_filename << "'\n";
+
+        osmium::io::File input_file{input_filename};
+
+        osmium::area::Assembler::config_type assembler_config;
+        if (debug) {
+            assembler_config.debug_level = 1;
+        }
+        osmium::area::MultipolygonManager<osmium::area::Assembler> mp_manager{assembler_config};
+
+        vout << "Pass 1...\n";
+        osmium::relations::read_relations(input_file, mp_manager);
+        vout << "Pass 1 done\n";
+
+        index_type index_pos;
+        location_handler_type location_handler{index_pos};
+        location_handler.ignore_errors();
+
+        osmium::geom::OGRFactory<> factory {};
+
+        CPLSetConfigOption("OGR_SQLITE_SYNCHRONOUS", "OFF");
+        gdalcpp::Dataset dataset{output_format, output_filename, gdalcpp::SRS{factory.proj_string()}, { "SPATIALITE=TRUE", "INIT_WITH_EPSG=no" }};
+        dataset.exec("PRAGMA journal_mode = OFF;");
+        if (features_per_transaction) {
+            dataset.enable_auto_transactions(features_per_transaction);
+        }
+
+        MyOGRHandler<decltype(factory)::projection_type> ogr_handler(dataset, factory, cfg);
+
+        vout << "Pass 2...\n";
+        osmium::io::Reader reader{input_file};
+
+        osmium::apply(reader, location_handler, ogr_handler, mp_manager.handler([&ogr_handler](const osmium::memory::Buffer& area_buffer) {
+            osmium::apply(area_buffer, ogr_handler);
+        }));
+
+        reader.close();
+        vout << "Pass 2 done\n";
+
+        std::vector<osmium::object_id_type> incomplete_relations_ids;
+        mp_manager.for_each_incomplete_relation([&](const osmium::relations::RelationHandle& handle){
+            incomplete_relations_ids.push_back(handle->id());
+        });
+        if (!incomplete_relations_ids.empty()) {
+            std::cerr << "Warning! Some member ways missing for these multipolygon relations:";
+            for (const auto id : incomplete_relations_ids) {
+                std::cerr << " " << id;
+            }
+            std::cerr << "\n";
+        }
+
+        osmium::MemoryUsage memory;
+        if (memory.peak()) {
+            vout << "Memory used: " << memory.peak() << " MBytes\n";
+        }
+    } catch (const std::exception& e) {
+        std::cerr << "Error: " << e.what() << '\n';
+        return 1;
     }
 
-    osmium::MemoryUsage memory;
-    if (memory.peak()) {
-        vout << "Memory used: " << memory.peak() << " MBytes\n";
-    }
+    return 0;
 }
 
