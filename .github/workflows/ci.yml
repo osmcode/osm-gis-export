@@ -12,6 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: ./.github/actions/install-ubuntu
+      - uses: ./.github/actions/cmake
       - uses: ./.github/actions/build
 
   ubuntu20-clang10-dev:
@@ -23,6 +24,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: ./.github/actions/install-ubuntu
+      - uses: ./.github/actions/cmake
       - uses: ./.github/actions/build
 
   ubuntu20-clang10-release:
@@ -34,17 +36,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: ./.github/actions/install-ubuntu
-      - uses: ./.github/actions/build
-
-  ubuntu16-gcc5-dev:
-    runs-on: ubuntu-16.04
-    env:
-      CC: gcc-5
-      CXX: g++-5
-      BUILD_TYPE: Dev
-    steps:
-      - uses: actions/checkout@v2
-      - uses: ./.github/actions/install-ubuntu
+      - uses: ./.github/actions/cmake
       - uses: ./.github/actions/build
 
   ubuntu18-gcc7-dev:
@@ -56,6 +48,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: ./.github/actions/install-ubuntu
+      - uses: ./.github/actions/cmake
       - uses: ./.github/actions/build
 
   ubuntu20-gcc9-dev:
@@ -67,6 +60,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: ./.github/actions/install-ubuntu
+      - uses: ./.github/actions/cmake
       - uses: ./.github/actions/build
 
   ubuntu20-gcc10-release:
@@ -78,6 +72,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: ./.github/actions/install-ubuntu
+      - uses: ./.github/actions/cmake
       - uses: ./.github/actions/build
 
   macos10-dev:
@@ -89,6 +84,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: ./.github/actions/install-macos
+      - uses: ./.github/actions/cmake
       - uses: ./.github/actions/build
 
   macos11-dev:
@@ -100,6 +96,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: ./.github/actions/install-macos
+      - uses: ./.github/actions/cmake
       - uses: ./.github/actions/build
 
   macos11-release:
@@ -111,5 +108,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: ./.github/actions/install-macos
+      - uses: ./.github/actions/cmake
       - uses: ./.github/actions/build
 
