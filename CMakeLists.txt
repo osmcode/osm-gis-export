@@ -6,7 +6,7 @@
 #
 #-----------------------------------------------------------------------------
 
-cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
 
@@ -45,7 +45,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 find_package(Boost 1.55.0 REQUIRED COMPONENTS program_options)
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
 
-find_package(Osmium 2.13.1 REQUIRED COMPONENTS io ogr proj)
+find_package(Osmium 2.13.1 REQUIRED COMPONENTS io ogr)
 include_directories(SYSTEM ${OSMIUM_INCLUDE_DIRS})
 
 if(MSVC)
@@ -87,7 +87,7 @@ endif()
 #
 #-----------------------------------------------------------------------------
 message(STATUS "Looking for clang-tidy")
-find_program(CLANG_TIDY NAMES clang-tidy clang-tidy-12 clang-tidy-11 clang-tidy-10 clang-tidy-9 clang-tidy-8)
+find_program(CLANG_TIDY NAMES clang-tidy clang-tidy-20 clang-tidy-19 clang-tidy-18 clang-tidy-17 clang-tidy-16 clang-tidy-15 clang-tidy-14)
 
 if(CLANG_TIDY)
     message(STATUS "Looking for clang-tidy - found ${CLANG_TIDY}")
@@ -205,7 +205,7 @@ set(CMAKE_BUILD_TYPE ${build_type}
 
 #-----------------------------------------------------------------------------
 
-add_definitions(${OSMIUM_WARNING_OPTIONS})
+add_definitions(${OSMIUM_WARNING_OPTIONS} -Wno-stringop-overread)
 
 add_subdirectory(src)
 
