@@ -7,9 +7,9 @@ runs:
       run: |
         sudo apt-get update -qq
         sudo apt-get install -yq \
-            libboost-dev \
-            libboost-program-options-dev \
-            libbz2-dev \
-            libgdal-dev
+             libboost-dev \
+             libboost-program-options-dev \
+             libbz2-dev \
+             libgdal-dev
       shell: bash
 
