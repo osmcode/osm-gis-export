@@ -1,12 +1,13 @@
 
 # OSM GIS Export
 
-THIS IS A VERY PRELIMINARY VERSION JUST MOVED HERE FROM THE LIBOSMIUM EXAMPLES!
+This is some older code, not really maintained, but could be useful, so we
+keep it here.
 
 A bunch of programs to export OSM data into GIS formats such as Shapefiles,
 PostgreSQL or Spatialite.
 
-[![Build Status](https://github.com/osmcode/osm-gis-export/workflows/CI/badge.svg?branch=master)](https://github.com/osmcode/osm-gis-export/actions)
+[![Build Status](https://github.com/osmcode/osm-gis-export/actions/workflows/ci.yml/badge.svg)](https://github.com/osmcode/osm-gis-export/actions)
 
 Sorry, do docs yet. You have to look at the source code and change it according
 to your needs. This software can be used as basis for your own experiments, but
@@ -18,8 +19,7 @@ support.
 
 ## Requires
 
-You need a C++11 compliant compiler. GCC 4.8 and later as well as clang 3.4 and
-later are known to work. You also need the following libraries:
+You need a C++14 compliant compiler. You also need the following libraries:
 
     Osmium Library
         Need at least version 2.13.1
