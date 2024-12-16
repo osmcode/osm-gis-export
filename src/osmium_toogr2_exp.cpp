@@ -19,7 +19,6 @@
 #include <osmium/index/map/sparse_mem_array.hpp> // IWYU pragma: keep
 #include <osmium/io/any_input.hpp> // IWYU pragma: keep
 #include <osmium/visitor.hpp>
-//#include <osmium/geom/projection.hpp>
 
 #include <cstdlib>
 #include <cstring>
@@ -171,12 +170,6 @@ int main(int argc, char* argv[]) {
 
         // 2. Project coordinates into "Web Mercator".
         osmium::geom::OGRFactory<osmium::geom::MercatorProjection> factory;
-
-        // 3. Use any projection that the proj library can handle.
-        //    (Initialize projection with EPSG code or proj string).
-        //    In addition you need to link with "-lproj" and add
-        //    #include <osmium/geom/projection.hpp>.
-        //osmium::geom::OGRFactory<osmium::geom::Projection> factory {osmium::geom::Projection(3857)};
 
         CPLSetConfigOption("OGR_SQLITE_SYNCHRONOUS", "OFF");
         gdalcpp::Dataset dataset{output_format, output_filename, gdalcpp::SRS{factory.proj_string()}, { "SPATIALITE=TRUE", "INIT_WITH_EPSG=no" }};

@@ -57,10 +57,6 @@ later are known to work. You also need the following libraries:
         Debian/Ubuntu: zlib1g-dev
         openSUSE: zlib-devel
 
-    PROJ
-        https://proj.org/
-        Debian/Ubuntu: libproj-dev
-
 ## Installing dependencies
 
 ### On Debian/Ubuntu
