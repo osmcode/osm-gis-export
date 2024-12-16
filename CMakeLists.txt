@@ -6,7 +6,7 @@
 #
 #-----------------------------------------------------------------------------
 
-cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.10 FATAL_ERROR)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
 
@@ -74,7 +74,7 @@ if(CPPCHECK)
     # cpp doesn't find system includes for some reason, suppress that report
     set(CPPCHECK_OPTIONS ${CPPCHECK_OPTIONS} --suppress=missingIncludeSystem)
 
-    add_custom_target(cppcheck ${CPPCHECK} --std=c++11 ${CPPCHECK_OPTIONS} ${CMAKE_SOURCE_DIR}/src/*pp)
+    add_custom_target(cppcheck ${CPPCHECK} --std=c++14 ${CPPCHECK_OPTIONS} ${CMAKE_SOURCE_DIR}/src/*pp)
 else()
     message(STATUS "Looking for cppcheck - not found")
     message(STATUS "  Build target 'cppcheck' will not be available")
@@ -126,12 +126,12 @@ endif()
 
 #-----------------------------------------------------------------------------
 #
-#  Decide which C++ version to use (Minimum/default: C++11).
+#  Decide which C++ version to use (Minimum/default: C++14).
 #
 #-----------------------------------------------------------------------------
 if(NOT MSVC)
     if(NOT USE_CPP_VERSION)
-        set(USE_CPP_VERSION c++11)
+        set(USE_CPP_VERSION c++14)
     endif()
     message(STATUS "Use C++ version: ${USE_CPP_VERSION}")
     # following only available from cmake 2.8.12:
@@ -205,7 +205,7 @@ set(CMAKE_BUILD_TYPE ${build_type}
 
 #-----------------------------------------------------------------------------
 
-add_definitions(${OSMIUM_WARNING_OPTIONS} -Wno-stringop-overread)
+add_definitions(${OSMIUM_WARNING_OPTIONS})
 
 add_subdirectory(src)
 
