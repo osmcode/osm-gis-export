@@ -198,4 +198,3 @@ jobs:
       - uses: ./.github/actions/install-from-git
       - uses: ./.github/actions/cmake
       - uses: ./.github/actions/build
-

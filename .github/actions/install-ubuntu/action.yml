@@ -12,4 +12,3 @@ runs:
              libbz2-dev \
              libgdal-dev
       shell: bash
-
