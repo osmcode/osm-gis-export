@@ -95,8 +95,6 @@ jobs:
             cmake \
             g++ \
             git \
-            libboost-dev \
-            libboost-program-options-dev \
             libbz2-dev \
             libexpat1-dev \
             libgdal-dev \
@@ -108,7 +106,6 @@ jobs:
         if: startsWith(matrix.image, 'fedora:')
         run: |
           dnf install --quiet --assumeyes \
-            boost-devel \
             bzip2-devel \
             cmake \
             expat-devel \

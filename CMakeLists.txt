@@ -42,9 +42,6 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 #
 #-----------------------------------------------------------------------------
 
-find_package(Boost 1.55.0 REQUIRED COMPONENTS program_options)
-include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
-
 find_package(Osmium 2.13.1 REQUIRED COMPONENTS io ogr)
 include_directories(SYSTEM ${OSMIUM_INCLUDE_DIRS})
 

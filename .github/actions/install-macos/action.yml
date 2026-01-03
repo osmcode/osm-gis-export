@@ -6,7 +6,6 @@ runs:
     - name: Install homebrew packages
       run: |
         brew install \
-          boost \
           gdal \
           spatialite-tools
       shell: bash

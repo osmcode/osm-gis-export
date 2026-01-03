@@ -2,10 +2,9 @@
 #include <cstdint>
 #include <cstdlib>
 #include <exception>
+#include <getopt.h>
 #include <iostream>
 #include <string>
-
-#include <boost/program_options.hpp>
 
 #include <gdalcpp.hpp>
 
@@ -144,69 +143,82 @@ public:
 
 /* ================================================== */
 
-namespace po = boost::program_options;
-
-void print_help(const po::options_description& desc) {
+void print_help() {
     std::cout << "osm_gis_export_overview [OPTIONS] OSM-FILE\n\n"
               << "If OSM-FILE is not used, stdin is assumed.\n\n"
-              << desc << "\n";
+              << "OPTIONS:\n"
+              << "  -h, --help                      Print usage information\n"
+              << "  -v, --verbose                   Enable verbose output\n"
+              << "  -o, --output=FILENAME           Output file name\n"
+              << "  -f, --output-format=FORMAT      Output OGR format (Default: 'SQLite')\n"
+              << "  --add-untagged-nodes            Add untagged nodes to point layer\n"
+              << "  --add-metadata                  Add columns for version, changeset,\n"
+              << "                                      timestamp, uid, and user\n"
+              << "  --features-per-transaction=NUM  Number of features to add per\n"
+              << "                                      transaction (Default: 100000)\n";
 }
 
 int main(int argc, char* argv[]) {
+    static struct option long_options[] = {{"output-format", required_argument, nullptr, 'f'},
+                                           {"features-per-transaction", required_argument, nullptr, 'F'},
+                                           {"help", no_argument, nullptr, 'h'},
+                                           {"add-metadata", no_argument, nullptr, 'm'},
+                                           {"output", required_argument, nullptr, 'o'},
+                                           {"add-untagged-nodes", no_argument, nullptr, 'u'},
+                                           {"verbose", no_argument, nullptr, 'v'},
+                                           {nullptr, 0, nullptr, 0}};
+
     try {
-        po::options_description desc("OPTIONS");
-        desc.add_options()
-            ("help,h", "Print usage information")
-            ("verbose,v", "Enable verbose output")
-            ("output,o", po::value<std::string>(), "Output file name")
-            ("output-format,f", po::value<std::string>()->default_value("SQLite"), "Output OGR format (Default: 'SQLite')")
-            ("add-untagged-nodes", "Add untagged nodes to point layer")
-            ("add-metadata", "Add columns for version, changeset, timestamp, uid, and user")
-            ("features-per-transaction", po::value<int>()->default_value(100000), "Number of features to add per transaction")
-        ;
-
-        po::options_description hidden;
-        hidden.add_options()
-        ("input-filename", po::value<std::string>(), "OSM input file")
-        ;
-
-        po::options_description parsed_options;
-        parsed_options.add(desc).add(hidden);
-
-        po::positional_options_description positional;
-        positional.add("input-filename", 1);
-
-        po::variables_map vm;
-        po::store(po::command_line_parser(argc, argv).options(parsed_options).positional(positional).run(), vm);
-        po::notify(vm);
-
         std::string input_filename;
         std::string output_filename;
         std::string output_format{"SQLite"};
+        unsigned long features_per_transaction = 100000;
         const bool debug = false;
 
         config cfg;
 
-        if (vm.count("help")) {
-            print_help(desc);
-            return 0;
+        while (true) {
+            int const c = getopt_long(argc, argv, "f:F:hmo:uv", long_options, nullptr);
+            if (c == -1) {
+                break;
+            }
+
+            switch (c) {
+            case 'f':
+                output_format = optarg;
+                break;
+            case 'F':
+                features_per_transaction = std::stoul(optarg);
+                break;
+            case 'h':
+                print_help();
+                return 0;
+            case 'm':
+                cfg.add_metadata = true;
+                break;
+            case 'o':
+                output_filename = optarg;
+                break;
+            case 'u':
+                cfg.add_untagged_nodes = true;
+                break;
+            case 'v':
+                cfg.verbose = true;
+                break;
+            default:
+                return 2;
+            }
         }
 
-        if (vm.count("verbose")) {
-            cfg.verbose = true;
+        int const remaining_args = argc - optind;
+        if (remaining_args != 1) {
+            print_help();
+            return 2;
         }
 
-        if (vm.count("output-format")) {
-            output_format = vm["output-format"].as<std::string>();
-        }
+        input_filename = argv[optind];
 
-        if (vm.count("input-filename")) {
-            input_filename = vm["input-filename"].as<std::string>();
-        }
-
-        if (vm.count("output")) {
-            output_filename = vm["output"].as<std::string>();
-        } else {
+        if (output_filename.empty()) {
             auto slash = input_filename.rfind('/');
             if (slash == std::string::npos) {
                 slash = 0;
@@ -219,19 +231,6 @@ int main(int argc, char* argv[]) {
                 output_filename.erase(dot);
             }
             output_filename.append(".db");
-        }
-
-        int features_per_transaction = 0;
-        if (vm.count("features-per-transaction")) {
-            features_per_transaction = vm["features-per-transaction"].as<int>();
-        }
-
-        if (vm.count("add-untagged-nodes")) {
-            cfg.add_untagged_nodes = true;
-        }
-
-        if (vm.count("add-metadata")) {
-            cfg.add_metadata = true;
         }
 
         osmium::util::VerboseOutput vout{cfg.verbose};
