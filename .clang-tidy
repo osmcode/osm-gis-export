@@ -1,5 +1,5 @@
 ---
-Checks: '*,-abseil-*,-altera-*,-fuchsia-*,-cppcoreguidelines-avoid-magic-numbers,-google-runtime-references,-readability-implicit-bool-conversion,-readability-magic-numbers'
+Checks: '*,-abseil-*,-altera-*,-fuchsia-*,-cppcoreguidelines-avoid-magic-numbers,-google-runtime-references,-llvmlibc-*,-misc-include-cleaner,-readability-implicit-bool-conversion,-readability-magic-numbers'
 #
 #  For a list of check options, see:
 #  https://clang.llvm.org/extra/clang-tidy/checks/list.html
@@ -22,6 +22,12 @@ Checks: '*,-abseil-*,-altera-*,-fuchsia-*,-cppcoreguidelines-avoid-magic-numbers
 #
 #  google-runtime-references
 #    This is just a matter of preference.
+#
+#  llvmlibc-*
+#    Not applicable.
+#
+#  misc-include-cleaner
+#    Too many reports. Disabled for now.
 #
 #  readability-implicit-bool-conversion
 #    I don't think this makes the code more readable.
