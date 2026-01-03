@@ -166,7 +166,7 @@ int main(int argc, char* argv[]) {
             input_filename = "-";
         }
 
-        osmium::io::File input_file{input_filename};
+        const osmium::io::File input_file{input_filename};
 
         osmium::area::Assembler::config_type assembler_config;
         if (debug) {
@@ -216,7 +216,7 @@ int main(int argc, char* argv[]) {
             std::cerr << "\n";
         }
 
-        osmium::MemoryUsage memory;
+        const osmium::MemoryUsage memory;
         if (memory.peak()) {
             std::cerr << "Memory used: " << memory.peak() << " MBytes\n";
         }

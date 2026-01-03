@@ -181,7 +181,7 @@ int main(int argc, char* argv[]) {
 
         exr.close();
 
-        std::vector<const osmium::Relation*> incomplete_relations = exr.collector().get_incomplete_relations();
+        const std::vector<const osmium::Relation*> incomplete_relations = exr.collector().get_incomplete_relations();
         if (!incomplete_relations.empty()) {
             std::cerr << "Warning! Some member ways missing for these multipolygon relations:";
             for (const auto* relation : incomplete_relations) {

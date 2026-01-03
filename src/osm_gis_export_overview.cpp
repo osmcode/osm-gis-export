@@ -183,7 +183,7 @@ int main(int argc, char* argv[]) {
         std::string input_filename;
         std::string output_filename;
         std::string output_format{"SQLite"};
-        bool debug = false;
+        const bool debug = false;
 
         config cfg;
 
@@ -237,7 +237,7 @@ int main(int argc, char* argv[]) {
         osmium::util::VerboseOutput vout{cfg.verbose};
         vout << "Writing to '" << output_filename << "'\n";
 
-        osmium::io::File input_file{input_filename};
+        const osmium::io::File input_file{input_filename};
 
         osmium::area::Assembler::config_type assembler_config;
         if (debug) {
@@ -286,7 +286,7 @@ int main(int argc, char* argv[]) {
             std::cerr << "\n";
         }
 
-        osmium::MemoryUsage memory;
+        const osmium::MemoryUsage memory;
         if (memory.peak()) {
             vout << "Memory used: " << memory.peak() << " MBytes\n";
         }
