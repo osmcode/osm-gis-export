@@ -19,7 +19,7 @@ support.
 
 ## Requires
 
-You need a C++14 compliant compiler. You also need the following libraries:
+You need a C++17 compliant compiler. You also need the following libraries:
 
     Osmium Library
         Need at least version 2.13.1

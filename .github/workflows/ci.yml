@@ -22,7 +22,7 @@ jobs:
           - "fedora:43"
         build_type: [Dev]
         cpp_compiler: [g++]
-        cpp_version: [c++14]
+        cpp_version: [c++17]
         include:
           - image: "ubuntu:22.04"
             CXXFLAGS: -Wno-stringop-overread -Wno-array-bounds
