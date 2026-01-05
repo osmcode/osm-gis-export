@@ -6,8 +6,17 @@
 #
 #-----------------------------------------------------------------------------
 
-cmake_minimum_required(VERSION 3.10 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.10)
+
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+
+#-----------------------------------------------------------------------------
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 
 #-----------------------------------------------------------------------------
@@ -22,18 +31,7 @@ set(CMAKE_CONFIGURATION_TYPES "Debug;Release;RelWithDebInfo;MinSizeRel;Dev"
     "List of available configuration types"
     FORCE)
 
-project(osm-gis-export)
-
-set(OSM_GIS_EXPORT_VERSION_MAJOR 0)
-set(OSM_GIS_EXPORT_VERSION_MINOR 0)
-set(OSM_GIS_EXPORT_VERSION_PATCH 1)
-
-set(OSM_GIS_EXPORT_VERSION
-    ${OSM_GIS_EXPORT_VERSION_MAJOR}.${OSM_GIS_EXPORT_VERSION_MINOR}.${OSM_GIS_EXPORT_VERSION_PATCH})
-
-set(AUTHOR "Jochen Topf <jochen@topf.org>")
-
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+project(osm-gis-export VERSION 0.0.1 LANGUAGES CXX C)
 
 
 #-----------------------------------------------------------------------------
@@ -118,23 +116,6 @@ if(IWYU_TOOL)
 else()
     message(STATUS "Looking for iwyu_tool.py - not found")
     message(STATUS "  Make target 'iwyu' will not be available")
-endif()
-
-
-#-----------------------------------------------------------------------------
-#
-#  Decide which C++ version to use (Minimum/default: C++17).
-#
-#-----------------------------------------------------------------------------
-if(NOT MSVC)
-    if(NOT USE_CPP_VERSION)
-        set(USE_CPP_VERSION c++17)
-    endif()
-    message(STATUS "Use C++ version: ${USE_CPP_VERSION}")
-    # following only available from cmake 2.8.12:
-    #   add_compile_options(-std=${USE_CPP_VERSION})
-    # so using this instead:
-    add_definitions(-std=${USE_CPP_VERSION})
 endif()
 
 
